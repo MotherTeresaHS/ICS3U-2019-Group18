@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
-# Created by: Mr. Coxall
-# Created on: October 2019
+# Created by: Jacob Bonner
+# Created on: January 2020
 # This constants file is CircuitPython Stage game
 
 # CircuitPython screen size is 160x128 and sprites are 16x16

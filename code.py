@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 
 # Created by: Jacob Bonner
-# Created on: December 2019
+# Created on: January 2020
 # This is the main game file for Asteroid Dodger for CircuitPython
 
 import ugame
@@ -106,9 +106,15 @@ def mt_splash_scene():
 
     text2 = stage.Text(width=29, height=14, font=None,
                        palette=constants.MT_GAME_STUDIO_PALETTE, buffer=None)
-    text2.move(35, 110)
-    text2.text("PRESS START")
+    text2.move(5, 105)
+    text2.text("In association with")
     text.append(text2)
+
+    text3 = stage.Text(width=29, height=14, font=None,
+                       palette=constants.MT_GAME_STUDIO_PALETTE, buffer=None)
+    text3.move(25, 115)
+    text3.text("Snakob Studios")
+    text.append(text3)
 
     # get sound ready
     # Use this guide to convert your other sounds to something that will work
@@ -135,8 +141,8 @@ def mt_splash_scene():
 
         # update game logic
 
-        # Wait for 1 seconds
-        time.sleep(1.0)
+        # Wait for 3 seconds
+        time.sleep(3.0)
         menu_scene()
 
         # redraw sprite list
@@ -145,14 +151,73 @@ def mt_splash_scene():
 def menu_scene():
     # this function is the game scene
 
+    # The image bank for the game
+    image_bank_1 = stage.Bank.from_bmp16("game.bmp")
+
+    # sets the background to image 0 in the bank
+    background = stage.Grid(image_bank_1, 10, 8)
+    for x_location in range(constants.SCREEN_GRID_X):
+        for y_location in range(constants.SCREEN_GRID_X):
+            background.tile(x_location, y_location, 14)
+
+    # The list that holds all the text
+    text = []
+
+    text1 = stage.Text(width=37, height=22, font=None,
+                       palette=constants.MT_GAME_STUDIO_PALETTE, buffer=None)
+    text1.move(20, 20)
+    text1.text("Asteroid Dodger")
+    text.append(text1)
+
+    text2 = stage.Text(width=37, height=22, font=None,
+                       palette=constants.MT_GAME_STUDIO_PALETTE, buffer=None)
+    text2.move(15, 80)
+    text2.text("'Start' to begin")
+    text.append(text2)
+
+    text3 = stage.Text(width=37, height=22, font=None,
+                       palette=constants.MT_GAME_STUDIO_PALETTE, buffer=None)
+    text3.move(10, 100)
+    text3.text("'Select' for rules")
+    text.append(text3)
+
+    # sets the background to image 0 in the bank
+    # backgrounds do not have magents as a transparent color
+    # background = stage.Grid(image_bank_1, 10, 8)
+    # changes (0,0) image to the 3rd image
+    # background.tile(4, 3, 3)
+
+    # This list keeps all the sprites
+    sprites = []
+
+    # Adding the left and right of the ship to the sprite list
+    ship_left = stage.Sprite(image_bank_1, 0, 70, 56)
+    sprites.append(ship_left)
+    ship_right = stage.Sprite(image_bank_1, 0, 80, 56)
+    sprites.append(ship_right)
+
+    # create a stage for the background to show up on
+    #   and set the frame rate to 60fps
+    game = stage.Stage(ugame.display, 60)
+    # set the layers, items show up in order
+    game.layers = text + sprites + [background]
+    # render the background and inital location of sprite list
+    # most likely you will only render background once per scene
+    game.render_block()
+
     # repeat forever, game loop
     while True:
         # get user input
+        keys = ugame.buttons.get_pressed()
 
         # update game logic
+        if keys & ugame.K_START != 0:  # Start button
+            game_scene()
+            pass
 
         # redraw sprite list
-        pass  # just a placeholder until you write the code
+        game.render_sprites(sprites)
+        game.tick()
 
 
 def game_scene():
