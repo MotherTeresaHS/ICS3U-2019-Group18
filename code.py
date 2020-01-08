@@ -149,7 +149,11 @@ def mt_splash_scene():
 
 
 def menu_scene():
-    # this function is the game scene
+    # this function is the menu scene
+
+    # Buttons to keep state information on
+    start_button = constants.button_state["button_up"]
+    select_button = constants.button_state["button_up"]
 
     # The image bank for the game
     image_bank_1 = stage.Bank.from_bmp16("gamesprite.bmp")
@@ -206,10 +210,17 @@ def menu_scene():
 
         # update game logic
         if keys & ugame.K_START != 0:  # Start button
+            keys = 0
+            ugame.K_START = 0
             game_scene()
+            pass
 
         if keys & ugame.K_SELECT != 0:  # Start button
+            keys = 0
+            ugame.K_SELECT = 0
             rules_scene()
+            pass
+            
 
         # redraw sprite list
         game.render_sprites(sprites)
@@ -217,7 +228,7 @@ def menu_scene():
 
 
 def rules_scene():
-    # this function is the game scene
+    # this function is the rules scene
 
     # The image bank for the game
     image_bank_1 = stage.Bank.from_bmp16("gamesprite.bmp")
@@ -271,7 +282,7 @@ def rules_scene():
     text7 = stage.Text(width=34, height=19, font=None,
                        palette=constants.MT_GAME_STUDIO_PALETTE, buffer=None)
     text7.move(15, 105)
-    text7.text("'Start' for menu")
+    text7.text("'Start' to begin")
     text.append(text7)
 
     # create a stage for the background to show up on
@@ -290,13 +301,34 @@ def rules_scene():
 
         # update game logic
         if keys & ugame.K_START != 0:  # Start button
-            menu_scene()
+            keys = 0
+            ugame.K_START = 0
+            game_scene()
+            pass
 
         # redraw sprite list
 
 
 def game_scene():
     # this function is the game scene
+
+    # The image bank for the game
+    image_bank_1 = stage.Bank.from_bmp16("gamesprite.bmp")
+
+    # sets the background to image 1 in the bank
+    background = stage.Grid(image_bank_1, 10, 8)
+    for x_location in range(constants.SCREEN_GRID_X):
+        for y_location in range(constants.SCREEN_GRID_X):
+            background.tile(x_location, y_location, 0)
+
+    # create a stage for the background to show up on
+    #   and set the frame rate to 60fps
+    game = stage.Stage(ugame.display, 60)
+    # set the layers, items show up in order
+    game.layers = [background]
+    # render the background and inital location of sprite list
+    # most likely you will only render background once per scene
+    game.render_block()
 
     # repeat forever, game loop
     while True:
