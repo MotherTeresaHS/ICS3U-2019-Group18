@@ -220,7 +220,6 @@ def menu_scene():
             ugame.K_SELECT = 0
             rules_scene()
             pass
-            
 
         # redraw sprite list
         game.render_sprites(sprites)
@@ -321,11 +320,18 @@ def game_scene():
         for y_location in range(constants.SCREEN_GRID_X):
             background.tile(x_location, y_location, 0)
 
+    # This list contains the primary sprites
+    sprites = []
+
+    # Creating spaceship sprite
+    ship = stage.Sprite(image_bank_1, 14, 75, 56)
+    sprites.insert(0, ship)
+
     # create a stage for the background to show up on
     #   and set the frame rate to 60fps
     game = stage.Stage(ugame.display, 60)
     # set the layers, items show up in order
-    game.layers = [background]
+    game.layers = sprites + [background]
     # render the background and inital location of sprite list
     # most likely you will only render background once per scene
     game.render_block()
@@ -333,11 +339,45 @@ def game_scene():
     # repeat forever, game loop
     while True:
         # get user input
+        keys = ugame.buttons.get_pressed()
+
+        # Move ship right
+        if keys & ugame.K_RIGHT:
+            if ship.x > constants.SCREEN_X - constants.SPRITE_SIZE:
+                ship.move(constants.SCREEN_X - constants.SPRITE_SIZE, ship.y)
+            else:
+                ship.move(ship.x + constants.SHIP_MOVEMENT_SPEED, ship.y)
+            pass
+
+        # Move ship left
+        if keys & ugame.K_LEFT:
+            if ship.x < 0:
+                ship.move(0, ship.y)
+            else:
+                ship.move(ship.x - constants.SHIP_MOVEMENT_SPEED, ship.y)
+            pass
+
+        # Move ship up
+        if keys & ugame.K_UP:
+            if ship.y < 0:
+                ship.move(ship.x, 0)
+            else:
+                ship.move(ship.x, ship.y - constants.SHIP_MOVEMENT_SPEED)
+            pass
+
+        # Move ship down
+        if keys & ugame.K_DOWN:
+            if ship.y > constants.SCREEN_Y - constants.SPRITE_SIZE:
+                ship.move(ship.x, constants.SCREEN_Y - constants.SPRITE_SIZE)
+            else:
+                ship.move(ship.x, ship.y + constants.SHIP_MOVEMENT_SPEED)
+            pass
 
         # update game logic
 
         # redraw sprite list
-        pass  # just a placeholder until you write the code
+        game.render_sprites(sprites)
+        game.tick()
 
 
 def game_over_scene(final_score):
