@@ -220,7 +220,6 @@ def menu_scene():
             ugame.K_SELECT = 0
             rules_scene()
             pass
-            
 
         # redraw sprite list
         game.render_sprites(sprites)
@@ -321,11 +320,93 @@ def game_scene():
         for y_location in range(constants.SCREEN_GRID_X):
             background.tile(x_location, y_location, 0)
 
+    # This list contains the primary sprites
+    sprites = []
+
+    # Creating spaceship sprite
+    ship = stage.Sprite(image_bank_1, 14, 75, 56)
+    sprites.insert(0, ship)
+
+    # These functions set and reset the start coordinates of asteroids
+    def reset_left_asteroid():
+        # Sets the start coordinates of asteroids starting on the left
+        for left_asteroid_number in range(len(left_asteroids)):
+            if left_asteroids[left_asteroid_number].x < 0:
+                left_asteroids[left_asteroid_number].move \
+                (random.randint(-100, 0 - constants.SPRITE_SIZE),
+                 random.randint(0, constants.SCREEN_Y))
+                break
+
+    def reset_top_asteroid():
+        # Sets the start coordinates of asteroids starting on the top
+        for top_asteroid_number in range(len(top_asteroids)):
+            if top_asteroids[top_asteroid_number].y < 0:
+                top_asteroids[top_asteroid_number].move \
+                (random.randint(0, constants.SCREEN_X),
+                 random.randint(-100, 0 - constants.SPRITE_SIZE))
+                break
+
+    def reset_right_asteroid():
+        # Sets the start coordinates of asteroids starting on the right
+        for right_asteroid_number in range(len(right_asteroids)):
+            if right_asteroids[right_asteroid_number].x < 0:
+                right_asteroids[right_asteroid_number].move \
+                (random.randint(constants.SCREEN_X, 228),
+                 random.randint(0, constants.SCREEN_Y))
+                break
+
+    def reset_bottom_asteroid():
+        # Sets the start coordinates of asteroids starting on the bottom
+        for down_asteroid_number in range(len(bottom_asteroids)):
+            if bottom_asteroids[down_asteroid_number].y < 0:
+                bottom_asteroids[down_asteroid_number].move \
+                (random.randint(0, constants.SCREEN_X),
+                 random.randint(160 + constants.SPRITE_SIZE, 260))
+                break
+
+    # Creating asteroids
+    # Asteroids staring from the left
+    left_asteroids = []
+    for left_asteroid_number in range(constants.ASTEROID_CREATION_TOTAL):
+        single_left_asteroid = stage.Sprite(image_bank_1, 4,
+                                            constants.OFF_SCREEN_X,
+                                            constants.OFF_SCREEN_Y)
+        left_asteroids.append(single_left_asteroid)
+    reset_left_asteroid()
+
+    # Asteroids staring from the top
+    top_asteroids = []
+    for top_asteroid_number in range(constants.ASTEROID_CREATION_TOTAL):
+        single_up_asteroid = stage.Sprite(image_bank_1, 5,
+                                          constants.OFF_SCREEN_X,
+                                          constants.OFF_SCREEN_Y)
+        top_asteroids.append(single_up_asteroid)
+    reset_top_asteroid()
+
+    # Asteroids starting from the right
+    right_asteroids = []
+    for right_asteroid_number in range(constants.ASTEROID_CREATION_TOTAL):
+        single_right_asteroid = stage.Sprite(image_bank_1, 6,
+                                             constants.OFF_SCREEN_X,
+                                             constants.OFF_SCREEN_Y)
+        right_asteroids.append(single_right_asteroid)
+    reset_right_asteroid()
+
+    # Asteroids staring from the bottom
+    bottom_asteroids = []
+    for down_asteroid_number in range(constants.ASTEROID_CREATION_TOTAL):
+        single_down_asteroid = stage.Sprite(image_bank_1, 7,
+                                            constants.OFF_SCREEN_X,
+                                            constants.OFF_SCREEN_Y)
+        bottom_asteroids.append(single_down_asteroid)
+    reset_bottom_asteroid()
+
     # create a stage for the background to show up on
     #   and set the frame rate to 60fps
     game = stage.Stage(ugame.display, 60)
     # set the layers, items show up in order
-    game.layers = [background]
+    game.layers = left_asteroids + right_asteroids + top_asteroids \
+                  + bottom_asteroids + sprites + [background]
     # render the background and inital location of sprite list
     # most likely you will only render background once per scene
     game.render_block()
@@ -333,11 +414,103 @@ def game_scene():
     # repeat forever, game loop
     while True:
         # get user input
+        keys = ugame.buttons.get_pressed()
+
+        # Move ship right
+        if keys & ugame.K_RIGHT:
+            if ship.x > constants.SCREEN_X - constants.SPRITE_SIZE:
+                ship.move(constants.SCREEN_X - constants.SPRITE_SIZE, ship.y)
+            else:
+                ship.move(ship.x + constants.SHIP_MOVEMENT_SPEED, ship.y)
+            pass
+
+        # Move ship left
+        if keys & ugame.K_LEFT:
+            if ship.x < 0:
+                ship.move(0, ship.y)
+            else:
+                ship.move(ship.x - constants.SHIP_MOVEMENT_SPEED, ship.y)
+            pass
+
+        # Move ship up
+        if keys & ugame.K_UP:
+            if ship.y < 0:
+                ship.move(ship.x, 0)
+            else:
+                ship.move(ship.x, ship.y - constants.SHIP_MOVEMENT_SPEED)
+            pass
+
+        # Move ship down
+        if keys & ugame.K_DOWN:
+            if ship.y > constants.SCREEN_Y - constants.SPRITE_SIZE:
+                ship.move(ship.x, constants.SCREEN_Y - constants.SPRITE_SIZE)
+            else:
+                ship.move(ship.x, ship.y + constants.SHIP_MOVEMENT_SPEED)
+            pass
 
         # update game logic
+        # Scroll asteroids from left of screen
+        for left_asteroid_number in range(len(left_asteroids)):
+            if left_asteroids[left_asteroid_number].x < \
+               constants.OFF_RIGHT_SCREEN:
+                left_asteroids[left_asteroid_number].move \
+                (left_asteroids[left_asteroid_number].x +
+                 constants.ASTEROID_SPEED,
+                 left_asteroids[left_asteroid_number].y)
+                if left_asteroids[left_asteroid_number].x > constants.SCREEN_X:
+                    left_asteroids[left_asteroid_number].move \
+                    (constants.OFF_SCREEN_X,
+                     constants.OFF_SCREEN_Y)
+                    reset_left_asteroid()
+
+        # Scroll asteroids from top of screen
+        for top_asteroid_number in range(len(top_asteroids)):
+            if top_asteroids[top_asteroid_number].y < \
+               constants.OFF_BOTTOM_SCREEN:
+                top_asteroids[top_asteroid_number].move \
+                (top_asteroids[top_asteroid_number].x,
+                 top_asteroids[top_asteroid_number].y +
+                 constants.ASTEROID_SPEED)
+                if top_asteroids[top_asteroid_number].y > constants.SCREEN_Y:
+                    top_asteroids[top_asteroid_number].move \
+                    (constants.OFF_SCREEN_X,
+                     constants.OFF_SCREEN_Y)
+                    reset_top_asteroid()
+
+        # Scroll asteroids from right of screen left
+        for right_asteroid_number in range(len(right_asteroids)):
+            if right_asteroids[right_asteroid_number].x > \
+               constants.OFF_LEFT_SCREEN:
+                right_asteroids[right_asteroid_number].move \
+                (right_asteroids[right_asteroid_number].x -
+                 constants.ASTEROID_SPEED,
+                 right_asteroids[right_asteroid_number].y)
+                if right_asteroids[right_asteroid_number].x \
+                   < 0 - constants.SPRITE_SIZE:
+                    right_asteroids[right_asteroid_number].move \
+                    (constants.OFF_SCREEN_X,
+                     constants.OFF_SCREEN_Y)
+                    reset_right_asteroid()
+
+        # Scroll asteroids from bottom of screen
+        for down_asteroid_number in range(len(bottom_asteroids)):
+            if bottom_asteroids[down_asteroid_number].y > \
+               constants.OFF_TOP_SCREEN:
+                bottom_asteroids[down_asteroid_number].move \
+                (bottom_asteroids[down_asteroid_number].x,
+                 bottom_asteroids[down_asteroid_number].y -
+                 constants.ASTEROID_SPEED)
+                if bottom_asteroids[down_asteroid_number].y < 0 - \
+                   constants.SPRITE_SIZE:
+                    bottom_asteroids[down_asteroid_number].move \
+                    (constants.OFF_SCREEN_X,
+                     constants.OFF_SCREEN_Y)
+                    reset_bottom_asteroid()
 
         # redraw sprite list
-        pass  # just a placeholder until you write the code
+        game.render_sprites(left_asteroids + right_asteroids + top_asteroids +
+                            bottom_asteroids + sprites)
+        game.tick()
 
 
 def game_over_scene(final_score):
