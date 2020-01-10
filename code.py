@@ -329,41 +329,48 @@ def game_scene():
     sprites.insert(0, ship)
 
     # Creating ammo pack sprites
-    single_shot = stage.Sprite(image_bank_1, 15, 
-                               constants.OFF_SCREEN_X, 
+    single_shot = stage.Sprite(image_bank_1, 15,
+                               constants.OFF_SCREEN_X,
                                constants.OFF_SCREEN_Y)
     sprites.append(single_shot)
-    spread_shot = stage.Sprite(image_bank_1, 2, 
-                               constants.OFF_SCREEN_X, 
+    spread_shot = stage.Sprite(image_bank_1, 2,
+                               constants.OFF_SCREEN_X,
                                constants.SCREEN_GRID_Y)
     sprites.append(spread_shot)
-    around_shot = stage.Sprite(image_bank_1, 3, constants.OFF_SCREEN_X, 
+    around_shot = stage.Sprite(image_bank_1, 3, constants.OFF_SCREEN_X,
                                constants.OFF_SCREEN_Y)
     sprites.append(around_shot)
 
+    # Setting the ammo generation timer
+    timer = 0
+    generation_time = random.randint(10, 30)
+
     # This function randomly generates ammo packs
     def spawn_ammo():
+        single_shot.move(constants.OFF_SCREEN_X, constants.OFF_SCREEN_Y)
+        spread_shot.move(constants.OFF_SCREEN_X, constants.OFF_SCREEN_Y)
+        around_shot.move(constants.OFF_SCREEN_X, constants.OFF_SCREEN_Y)
         type_of_ammo = random.randint(1, 100)
         if type_of_ammo <= 50:
-            single_shot.move(random.randint(0 + constants.SPRITE_SIZE, 
-                                            constants.SCREEN_X - 
+            single_shot.move(random.randint(0 + constants.SPRITE_SIZE,
+                                            constants.SCREEN_X -
                                             constants.SPRITE_SIZE),
-                             random.randint(0 + constants.SPRITE_SIZE, 
-                                            constants.SCREEN_Y - 
+                             random.randint(0 + constants.SPRITE_SIZE,
+                                            constants.SCREEN_Y -
                                             constants.SPRITE_SIZE))
         elif type_of_ammo >= 51 and type_of_ammo <= 80:
-            spread_shot.move(random.randint(0 + constants.SPRITE_SIZE, 
-                                            constants.SCREEN_X - 
+            spread_shot.move(random.randint(0 + constants.SPRITE_SIZE,
+                                            constants.SCREEN_X -
                                             constants.SPRITE_SIZE),
-                             random.randint(0 + constants.SPRITE_SIZE, 
-                                            constants.SCREEN_Y - 
+                             random.randint(0 + constants.SPRITE_SIZE,
+                                            constants.SCREEN_Y -
                                             constants.SPRITE_SIZE))
         elif type_of_ammo >= 81:
-            spread_shot.move(random.randint(0 + constants.SPRITE_SIZE, 
-                                            constants.SCREEN_X - 
+            around_shot.move(random.randint(0 + constants.SPRITE_SIZE,
+                                            constants.SCREEN_X -
                                             constants.SPRITE_SIZE),
-                             random.randint(0 + constants.SPRITE_SIZE, 
-                                            constants.SCREEN_Y - 
+                             random.randint(0 + constants.SPRITE_SIZE,
+                                            constants.SCREEN_Y -
                                             constants.SPRITE_SIZE))
 
     # These functions set and reset the start coordinates of asteroids
@@ -372,7 +379,7 @@ def game_scene():
         for left_asteroid_number in range(len(left_asteroids)):
             if left_asteroids[left_asteroid_number].x < 0:
                 left_asteroids[left_asteroid_number].move(random.randint
-                                                          (-100, 0 - 
+                                                          (-100, 0 -
                                                            constants.SPRITE_SIZE),
                                                           random.randint
                                                           (0, constants.SCREEN_Y))
@@ -385,7 +392,7 @@ def game_scene():
                 top_asteroids[top_asteroid_number].move(random.randint
                                                         (0, constants.SCREEN_X),
                                                         random.randint
-                                                        (-100, 0 - 
+                                                        (-100, 0 -
                                                          constants.SPRITE_SIZE))
                 break
 
@@ -406,7 +413,7 @@ def game_scene():
                 bottom_asteroids[down_asteroid_number].move(random.randint
                                                         (0, constants.SCREEN_X),
                                                         random.randint
-                                                        (160 + constants.SPRITE_SIZE, 
+                                                        (160 + constants.SPRITE_SIZE,
                                                          260))
                 break
 
@@ -538,7 +545,18 @@ def game_scene():
                     bottom_asteroids[down_asteroid_number].move(constants.OFF_SCREEN_X,
                                                                 constants.OFF_SCREEN_Y)
                     reset_bottom_asteroid()
-        
+
+        # Ammo spawn timer
+        for counter in range(1, 61):
+            if counter == 60:
+                timer = timer + 1
+                if timer == generation_time:
+                    spawn_ammo()
+                    timer = 0
+                    generation_time = random.randint(800, 1000)
+                else:
+                    continue
+
         # redraw sprite list
         game.render_sprites(left_asteroids + right_asteroids + top_asteroids +
                             bottom_asteroids + sprites)
