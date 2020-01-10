@@ -328,22 +328,33 @@ def game_scene():
     ship = stage.Sprite(image_bank_1, 14, 75, 56)
     sprites.insert(0, ship)
 
+    # This list contains the ammo packs
+    ammo = []
+
     # Creating ammo pack sprites
     single_shot = stage.Sprite(image_bank_1, 15,
                                constants.OFF_SCREEN_X,
                                constants.OFF_SCREEN_Y)
-    sprites.append(single_shot)
+    ammo.append(single_shot)
     spread_shot = stage.Sprite(image_bank_1, 2,
                                constants.OFF_SCREEN_X,
                                constants.SCREEN_GRID_Y)
-    sprites.append(spread_shot)
+    ammo.append(spread_shot)
     around_shot = stage.Sprite(image_bank_1, 3, constants.OFF_SCREEN_X,
                                constants.OFF_SCREEN_Y)
-    sprites.append(around_shot)
+    ammo.append(around_shot)
 
     # Setting the ammo generation timer
     timer = 0
-    generation_time = random.randint(10, 30)
+    generation_time = random.randint(1500, 2500)
+
+    # Getting sounds ready
+    pickup_sound = open("pickup.wav", 'rb')
+    laser_sound = open("laser.wav", 'rb')
+    crash_sound = open("crash.WAV", 'rb')
+    sound = ugame.audio
+    sound.stop()
+    sound.mute(False)
 
     # This function randomly generates ammo packs
     def spawn_ammo():
@@ -459,7 +470,7 @@ def game_scene():
     game = stage.Stage(ugame.display, 60)
     # set the layers, items show up in order
     game.layers = left_asteroids + right_asteroids + top_asteroids \
-                  + bottom_asteroids + sprites + [background]
+                  + bottom_asteroids + sprites + ammo + [background]
     # render the background and inital location of sprite list
     # most likely you will only render background once per scene
     game.render_block()
@@ -553,13 +564,31 @@ def game_scene():
                 if timer == generation_time:
                     spawn_ammo()
                     timer = 0
-                    generation_time = random.randint(800, 1000)
+                    generation_time = random.randint(1500, 2500)
                 else:
                     continue
 
+        # This detects if the ship has hit an ammo pack
+        for ammo_number in range(len(ammo)):
+            if ammo[ammo_number].x > 0:
+                for sprite_number in range(len(sprites)):
+                    if sprites[sprite_number].x > 0:
+                        if stage.collide(ammo[ammo_number].x + 6,
+                                         ammo[ammo_number].y + 3,
+                                         ammo[ammo_number].x + 10,
+                                         ammo[ammo_number].y + 13,
+                                         sprites[sprite_number].x + 1,
+                                         sprites[sprite_number].y + 1,
+                                         sprites[sprite_number].x + 14,
+                                         sprites[sprite_number].y + 14):
+                            ammo[ammo_number].move(constants.OFF_SCREEN_X,
+                                                   constants.OFF_SCREEN_Y)
+                            # sound.stop()
+                            # sound.play(pickup_sound)
+
         # redraw sprite list
         game.render_sprites(left_asteroids + right_asteroids + top_asteroids +
-                            bottom_asteroids + sprites)
+                            bottom_asteroids + sprites + ammo)
         game.tick()
 
 
