@@ -349,9 +349,10 @@ def game_scene():
     generation_time = random.randint(1500, 2500)
 
     # Getting sounds ready
-    pickup_sound = open("pickup.wav", 'rb')
     laser_sound = open("laser.wav", 'rb')
     crash_sound = open("crash.WAV", 'rb')
+    load_sound = open("load.wav", 'rb')
+    impact_sound = open("impact.wav", 'rb')
     sound = ugame.audio
     sound.stop()
     sound.mute(False)
@@ -583,8 +584,8 @@ def game_scene():
                                          sprites[sprite_number].y + 14):
                             ammo[ammo_number].move(constants.OFF_SCREEN_X,
                                                    constants.OFF_SCREEN_Y)
-                            # sound.stop()
-                            # sound.play(pickup_sound)
+                            sound.stop()
+                            sound.play(load_sound)
 
         # redraw sprite list
         game.render_sprites(left_asteroids + right_asteroids + top_asteroids +
