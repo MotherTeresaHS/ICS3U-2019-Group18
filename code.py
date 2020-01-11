@@ -328,6 +328,11 @@ def game_scene():
     ship = stage.Sprite(image_bank_1, 14, 75, 56)
     sprites.insert(0, ship)
 
+    # Buttons that you want to keep state information on
+    a_button = constants.button_state["button_up"]
+    start_button = constants.button_state["button_up"]
+    select_button = constants.button_state["button_up"]
+
     # This list contains the ammo packs
     ammo = []
 
@@ -344,9 +349,22 @@ def game_scene():
                                constants.OFF_SCREEN_Y)
     ammo.append(around_shot)
 
-    # Setting the ammo generation timer
+    # This list contains the laser sprites
+    lasers = []
+
+    # Generating laser sprites
+    for laser_number in range(constants.LASER_CREATION_TOTAL):
+        single_laser = stage.Sprite(image_bank_1, 10,
+                                            constants.OFF_SCREEN_X,
+                                            constants.OFF_SCREEN_Y)
+        lasers.append(single_laser)
+
+    # Setting the ammo generation timer and values
     timer = 0
     generation_time = random.randint(1500, 2500)
+    ammo_type = 0
+    firing_type = 0
+    state_of_button = 0
 
     # Getting sounds ready
     laser_sound = open("laser.wav", 'rb')
@@ -362,8 +380,10 @@ def game_scene():
         single_shot.move(constants.OFF_SCREEN_X, constants.OFF_SCREEN_Y)
         spread_shot.move(constants.OFF_SCREEN_X, constants.OFF_SCREEN_Y)
         around_shot.move(constants.OFF_SCREEN_X, constants.OFF_SCREEN_Y)
-        type_of_ammo = random.randint(1, 100)
+        type_of_ammo = random.randint(81, 100)
+        ammo_variant = 0
         if type_of_ammo <= 50:
+            ammo_variant = 1
             single_shot.move(random.randint(0 + constants.SPRITE_SIZE,
                                             constants.SCREEN_X -
                                             constants.SPRITE_SIZE),
@@ -371,6 +391,7 @@ def game_scene():
                                             constants.SCREEN_Y -
                                             constants.SPRITE_SIZE))
         elif type_of_ammo >= 51 and type_of_ammo <= 80:
+            ammo_variant = 2
             spread_shot.move(random.randint(0 + constants.SPRITE_SIZE,
                                             constants.SCREEN_X -
                                             constants.SPRITE_SIZE),
@@ -378,12 +399,14 @@ def game_scene():
                                             constants.SCREEN_Y -
                                             constants.SPRITE_SIZE))
         elif type_of_ammo >= 81:
+            ammo_variant = 3
             around_shot.move(random.randint(0 + constants.SPRITE_SIZE,
                                             constants.SCREEN_X -
                                             constants.SPRITE_SIZE),
                              random.randint(0 + constants.SPRITE_SIZE,
                                             constants.SCREEN_Y -
                                             constants.SPRITE_SIZE))
+        return ammo_variant
 
     # These functions set and reset the start coordinates of asteroids
     def reset_left_asteroid():
@@ -471,7 +494,7 @@ def game_scene():
     game = stage.Stage(ugame.display, 60)
     # set the layers, items show up in order
     game.layers = left_asteroids + right_asteroids + top_asteroids \
-                  + bottom_asteroids + sprites + ammo + [background]
+                  + bottom_asteroids + sprites + lasers + ammo + [background]
     # render the background and inital location of sprite list
     # most likely you will only render background once per scene
     game.render_block()
@@ -483,6 +506,7 @@ def game_scene():
 
         # Move ship right
         if keys & ugame.K_RIGHT:
+            state_of_button = 2
             if ship.x > constants.SCREEN_X - constants.SPRITE_SIZE:
                 ship.move(constants.SCREEN_X - constants.SPRITE_SIZE, ship.y)
             else:
@@ -491,6 +515,7 @@ def game_scene():
 
         # Move ship left
         if keys & ugame.K_LEFT:
+            state_of_button = 4
             if ship.x < 0:
                 ship.move(0, ship.y)
             else:
@@ -499,6 +524,7 @@ def game_scene():
 
         # Move ship up
         if keys & ugame.K_UP:
+            state_of_button = 1
             if ship.y < 0:
                 ship.move(ship.x, 0)
             else:
@@ -507,13 +533,270 @@ def game_scene():
 
         # Move ship down
         if keys & ugame.K_DOWN:
+            state_of_button = 3
             if ship.y > constants.SCREEN_Y - constants.SPRITE_SIZE:
                 ship.move(ship.x, constants.SCREEN_Y - constants.SPRITE_SIZE)
             else:
                 ship.move(ship.x, ship.y + constants.SHIP_MOVEMENT_SPEED)
             pass
 
+        # A button to fire
+        if keys & ugame.K_X != 0:
+            if a_button == constants.button_state["button_up"]:
+                a_button = constants.button_state["button_just_pressed"]
+            elif a_button == constants.button_state["button_just_pressed"]:
+                a_button = constants.button_state["button_still_pressed"]
+        else:
+            if a_button == constants.button_state["button_still_pressed"]:
+                a_button = constants.button_state["button_released"]
+            else:
+                a_button = constants.button_state["button_up"]
+
         # update game logic
+
+        # Ammo spawn timer
+        for counter in range(1, 61):
+            if counter == 60:
+                timer = timer + 1
+                if timer == generation_time:
+                    ammo_type = spawn_ammo()
+                    timer = 0
+                    generation_time = random.randint(1500, 2500)
+                else:
+                    continue
+
+        if a_button == constants.button_state["button_released"]:
+            for laser_number in range(len(lasers)):
+                # No ammo
+                if ammo_type == 0:
+                    break
+                # Single shot
+                elif ammo_type == 1:
+                    if lasers[1].x < 0:
+                        lasers[1].move(ship.x, ship.y)
+                        sound.stop()
+                        sound.play(laser_sound)
+                        firing_type = 1
+                        ammo_type = 0
+                        if state_of_button == 1:
+                            firing_direction = 1
+                        elif state_of_button == 2:
+                            firing_direction = 2
+                        elif state_of_button == 3:
+                            firing_direction = 3
+                        elif state_of_button == 4:
+                            firing_direction = 4
+                        break
+                # Spread shot
+                elif ammo_type == 2:
+                    if lasers[1].x < 0:
+                        lasers[1].move(ship.x, ship.y)
+                    if lasers[2].x < 0:
+                        lasers[2].move(ship.x, ship.y)
+                    if lasers[3].x < 0:
+                        lasers[3].move(ship.x, ship.y)
+                        sound.stop()
+                        sound.play(laser_sound)
+                        firing_type = 2
+                        ammo_type = 0
+                        if state_of_button == 1:
+                            firing_direction = 1
+                        elif state_of_button == 2:
+                            firing_direction = 2
+                        elif state_of_button == 3:
+                            firing_direction = 3
+                        elif state_of_button == 4:
+                            firing_direction = 4
+                        break
+                    # Around shot
+                elif ammo_type == 3:
+                    if lasers[0].x < 0:
+                        lasers[0].move(ship.x, ship.y)
+                    if lasers[1].x < 0:
+                        lasers[1].move(ship.x, ship.y)
+                    if lasers[2].x < 0:
+                        lasers[2].move(ship.x, ship.y)
+                    if lasers[3].x < 0:
+                        lasers[3].move(ship.x, ship.y)
+                    if lasers[4].x < 0:
+                        lasers[4].move(ship.x, ship.y)
+                    if lasers[5].x < 0:
+                        lasers[5].move(ship.x, ship.y)
+                    if lasers[6].x < 0:
+                        lasers[6].move(ship.x, ship.y)
+                    if lasers[7].x < 0:
+                        lasers[7].move(ship.x, ship.y)
+                        sound.stop()
+                        sound.play(laser_sound)
+                        firing_type = 3
+                        ammo_type = 0
+                        break
+                    else:
+                        continue
+
+        # Firing lasers
+        for laser_number in range(len(lasers)):
+            # Single shot
+            if firing_type == 1:
+                # Upwards shot
+                if lasers[1].x > 0 and firing_direction == 1:
+                    lasers[1].move(lasers[1].x, lasers[1].y -
+                                   constants.LASER_SPEED)
+                    if lasers[1].y < constants.OFF_TOP_SCREEN:
+                        lasers[1].move(constants.OFF_SCREEN_X,
+                                       constants.OFF_SCREEN_Y)
+                        firing_type = 0
+                        firing_direction = 0
+                # Right shot
+                elif lasers[1].y > 0 and firing_direction == 2:
+                    lasers[1].move(lasers[1].x + constants.LASER_SPEED, 
+                                   lasers[1].y)
+                    if lasers[1].x >= constants.OFF_RIGHT_SCREEN:
+                        lasers[1].move(constants.OFF_SCREEN_X,
+                                       constants.OFF_SCREEN_Y)
+                        firing_type = 0
+                        firing_direction = 0
+                # Downwards shot
+                elif lasers[1].x > 0 and firing_direction == 3:
+                    lasers[1].move(lasers[1].x, lasers[1].y + 
+                                   constants.LASER_SPEED)
+                    if lasers[1].y >= constants.OFF_BOTTOM_SCREEN:
+                        lasers[1].move(constants.OFF_SCREEN_X,
+                                       constants.OFF_SCREEN_Y)
+                        firing_type = 0
+                        firing_direction = 0
+                # Left shot
+                elif lasers[1].y > 0 and firing_direction == 4:
+                    lasers[1].move(lasers[1].x - constants.LASER_SPEED, 
+                                   lasers[1].y)
+                    if lasers[1].x < constants.OFF_LEFT_SCREEN:
+                        lasers[1].move(constants.OFF_SCREEN_X,
+                                       constants.OFF_SCREEN_Y)
+                        firing_type = 0
+                        firing_direction = 0
+            # Spread shot
+            if firing_type == 2:
+                if lasers[1].x > 0 and firing_direction == 1:
+                    lasers[1].move(lasers[1].x, lasers[1].y
+                                   - constants.LASER_SPEED)
+                    lasers[2].move(lasers[2].x + constants.LASER_SPEED, 
+                                   lasers[2].y - constants.LASER_SPEED)
+                    lasers[3].move(lasers[3].x - constants.LASER_SPEED, 
+                                   lasers[3].y - constants.LASER_SPEED)
+                    if lasers[1].y < constants.OFF_TOP_SCREEN:
+                        lasers[1].move(constants.OFF_SCREEN_X,
+                                       constants.OFF_SCREEN_Y)
+                    if lasers[2].y < constants.OFF_TOP_SCREEN:
+                        lasers[2].move(constants.OFF_SCREEN_X,
+                                       constants.OFF_SCREEN_Y)
+                    if lasers[3].y < constants.OFF_TOP_SCREEN:
+                        lasers[3].move(constants.OFF_SCREEN_X,
+                                       constants.OFF_SCREEN_Y)
+                        firing_type = 0
+                        firing_direction = 0
+                # Right shot
+                elif lasers[1].y > 0 and firing_direction == 2:
+                    lasers[1].move(lasers[1].x + constants.LASER_SPEED, 
+                                   lasers[1].y)
+                    lasers[2].move(lasers[2].x + constants.LASER_SPEED, 
+                                   lasers[2].y - constants.LASER_SPEED)
+                    lasers[3].move(lasers[3].x + constants.LASER_SPEED, 
+                                   lasers[3].y + constants.LASER_SPEED)
+                    if lasers[1].x >= constants.OFF_RIGHT_SCREEN:
+                        lasers[1].move(constants.OFF_SCREEN_X,
+                                       constants.OFF_SCREEN_Y)
+                    if lasers[2].x >= constants.OFF_RIGHT_SCREEN:
+                        lasers[2].move(constants.OFF_SCREEN_X,
+                                       constants.OFF_SCREEN_Y)
+                    if lasers[3].x >= constants.OFF_RIGHT_SCREEN:
+                        lasers[3].move(constants.OFF_SCREEN_X,
+                                       constants.OFF_SCREEN_Y)
+                        firing_type = 0
+                        firing_direction = 0
+                # Downwards shot
+                elif lasers[1].x > 0 and firing_direction == 3:
+                    lasers[1].move(lasers[1].x, lasers[1].y + 
+                                   constants.LASER_SPEED)
+                    lasers[2].move(lasers[2].x - constants.LASER_SPEED,
+                                   lasers[2].y + constants.LASER_SPEED)
+                    lasers[3].move(lasers[3].x + constants.LASER_SPEED,
+                                   lasers[3].y + constants.LASER_SPEED)
+                    if lasers[1].y >= constants.OFF_BOTTOM_SCREEN:
+                        lasers[1].move(constants.OFF_SCREEN_X,
+                                       constants.OFF_SCREEN_Y)
+                    if lasers[2].y >= constants.OFF_BOTTOM_SCREEN:
+                        lasers[2].move(constants.OFF_SCREEN_X,
+                                       constants.OFF_SCREEN_Y)
+                    if lasers[3].y >= constants.OFF_BOTTOM_SCREEN:
+                        lasers[3].move(constants.OFF_SCREEN_X,
+                                       constants.OFF_SCREEN_Y)
+                        firing_type = 0
+                        firing_direction = 0
+                # Left shot
+                elif lasers[1].y > 0 and firing_direction == 4:
+                    lasers[1].move(lasers[1].x - constants.LASER_SPEED, 
+                                   lasers[1].y)
+                    lasers[2].move(lasers[2].x - constants.LASER_SPEED, 
+                                   lasers[2].y + constants.LASER_SPEED)
+                    lasers[3].move(lasers[3].x - constants.LASER_SPEED, 
+                                   lasers[3].y - constants.LASER_SPEED)
+                    if lasers[1].x < constants.OFF_LEFT_SCREEN:
+                        lasers[1].move(constants.OFF_SCREEN_X,
+                                       constants.OFF_SCREEN_Y)
+                    if lasers[2].x < constants.OFF_LEFT_SCREEN:
+                        lasers[2].move(constants.OFF_SCREEN_X,
+                                       constants.OFF_SCREEN_Y)
+                    if lasers[3].x < constants.OFF_LEFT_SCREEN:
+                        lasers[3].move(constants.OFF_SCREEN_X,
+                                       constants.OFF_SCREEN_Y)
+                        firing_type = 0
+                        firing_direction = 0
+            # Around shot
+            if firing_type == 3:
+                if lasers[laser_number].x > 0:
+                    lasers[0].move(lasers[0].x, lasers[0].y -
+                                   constants.LASER_SPEED)
+                    lasers[1].move(lasers[1].x + constants.LASER_SPEED, 
+                                   lasers[1].y - constants.LASER_SPEED)
+                    lasers[2].move(lasers[2].x + constants.EXTRA_LASER_SPEED,
+                                   lasers[2].y)
+                    lasers[3].move(lasers[3].x + constants.LASER_SPEED, 
+                                   lasers[3].y + constants.LASER_SPEED)
+                    lasers[4].move(lasers[4].x, lasers[4].y +
+                                   constants.LASER_SPEED)
+                    lasers[5].move(lasers[5].x - constants.LASER_SPEED, 
+                                   lasers[5].y + constants.LASER_SPEED)
+                    lasers[6].move(lasers[6].x - constants.EXTRA_LASER_SPEED,
+                                   lasers[6].y)
+                    lasers[7].move(lasers[7].x - constants.LASER_SPEED, 
+                                   lasers[7].y - constants.LASER_SPEED)
+                    if lasers[0].y < constants.OFF_TOP_SCREEN:
+                        lasers[0].move(constants.OFF_SCREEN_X,
+                                       constants.OFF_SCREEN_Y)
+                    if lasers[1].y < constants.OFF_TOP_SCREEN:
+                        lasers[1].move(constants.OFF_SCREEN_X,
+                                       constants.OFF_SCREEN_Y)
+                    if lasers[2].x >= 176:
+                        lasers[2].move(constants.OFF_SCREEN_X,
+                                       constants.OFF_SCREEN_Y)
+                    if lasers[3].y > constants.OFF_BOTTOM_SCREEN:
+                        lasers[3].move(constants.OFF_SCREEN_X,
+                                       constants.OFF_SCREEN_Y)
+                    if lasers[4].y > constants.OFF_BOTTOM_SCREEN:
+                        lasers[4].move(constants.OFF_SCREEN_X,
+                                       constants.OFF_SCREEN_Y)
+                    if lasers[5].y > constants.OFF_BOTTOM_SCREEN:
+                        lasers[5].move(constants.OFF_SCREEN_X,
+                                       constants.OFF_SCREEN_Y)
+                    if lasers[6].x <= -17:
+                        lasers[6].move(constants.OFF_SCREEN_X,
+                                       constants.OFF_SCREEN_Y)
+                    if lasers[7].y < constants.OFF_TOP_SCREEN:
+                        lasers[7].move(constants.OFF_SCREEN_X,
+                                       constants.OFF_SCREEN_Y)
+                        firing_type = 0
+                        firing_direction = 0
+
         # Scroll asteroids from left of screen
         for left_asteroid_number in range(len(left_asteroids)):
             if left_asteroids[left_asteroid_number].x < constants.OFF_RIGHT_SCREEN:
@@ -558,18 +841,7 @@ def game_scene():
                                                                 constants.OFF_SCREEN_Y)
                     reset_bottom_asteroid()
 
-        # Ammo spawn timer
-        for counter in range(1, 61):
-            if counter == 60:
-                timer = timer + 1
-                if timer == generation_time:
-                    spawn_ammo()
-                    timer = 0
-                    generation_time = random.randint(1500, 2500)
-                else:
-                    continue
-
-        # This detects if the ship has hit an ammo pack
+        # This detects if the ship has hit and collected an ammo pack
         for ammo_number in range(len(ammo)):
             if ammo[ammo_number].x > 0:
                 for sprite_number in range(len(sprites)):
@@ -589,7 +861,7 @@ def game_scene():
 
         # redraw sprite list
         game.render_sprites(left_asteroids + right_asteroids + top_asteroids +
-                            bottom_asteroids + sprites + ammo)
+                            bottom_asteroids + sprites + lasers + ammo)
         game.tick()
 
 
