@@ -151,6 +151,9 @@ def mt_splash_scene():
 def menu_scene():
     # this function is the menu scene
 
+    # Reupdating keys
+    keys = 0
+
     # Buttons to keep state information on
     start_button = constants.button_state["button_up"]
     select_button = constants.button_state["button_up"]
@@ -213,13 +216,13 @@ def menu_scene():
             keys = 0
             ugame.K_START = 0
             game_scene()
-            pass
+            break
 
         if keys & ugame.K_SELECT != 0:  # Start button
             keys = 0
             ugame.K_SELECT = 0
             rules_scene()
-            pass
+            break
 
 
         # redraw sprite list
@@ -366,6 +369,9 @@ def game_scene():
     firing_type = 0
     state_of_button = 0
 
+    # Score counter for the asteroids
+    asteroid_counter = 0
+
     # Getting sounds ready
     laser_sound = open("laser.wav", 'rb')
     crash_sound = open("crash.WAV", 'rb')
@@ -380,7 +386,7 @@ def game_scene():
         single_shot.move(constants.OFF_SCREEN_X, constants.OFF_SCREEN_Y)
         spread_shot.move(constants.OFF_SCREEN_X, constants.OFF_SCREEN_Y)
         around_shot.move(constants.OFF_SCREEN_X, constants.OFF_SCREEN_Y)
-        type_of_ammo = random.randint(81, 100)
+        type_of_ammo = random.randint(1, 100)
         ammo_variant = 0
         if type_of_ammo <= 50:
             ammo_variant = 1
@@ -488,6 +494,8 @@ def game_scene():
                                             constants.OFF_SCREEN_Y)
         bottom_asteroids.append(single_down_asteroid)
     reset_bottom_asteroid()
+
+    start_time = time.time()
 
     # create a stage for the background to show up on
     #   and set the frame rate to 60fps
@@ -676,14 +684,15 @@ def game_scene():
                         firing_direction = 0
             # Spread shot
             if firing_type == 2:
-                if lasers[1].x > 0 and firing_direction == 1:
+                # Up shot
+                if lasers[laser_number].y > -17 and firing_direction == 1:
                     lasers[1].move(lasers[1].x, lasers[1].y
                                    - constants.LASER_SPEED)
                     lasers[2].move(lasers[2].x + constants.LASER_SPEED, 
                                    lasers[2].y - constants.LASER_SPEED)
                     lasers[3].move(lasers[3].x - constants.LASER_SPEED, 
                                    lasers[3].y - constants.LASER_SPEED)
-                    if lasers[1].y < constants.OFF_TOP_SCREEN:
+                    if lasers[laser_number].y < constants.OFF_TOP_SCREEN:
                         lasers[1].move(constants.OFF_SCREEN_X,
                                        constants.OFF_SCREEN_Y)
                     if lasers[2].y < constants.OFF_TOP_SCREEN:
@@ -695,7 +704,7 @@ def game_scene():
                         firing_type = 0
                         firing_direction = 0
                 # Right shot
-                elif lasers[1].y > 0 and firing_direction == 2:
+                elif lasers[laser_number].x < 176 and firing_direction == 2:
                     lasers[1].move(lasers[1].x + constants.LASER_SPEED, 
                                    lasers[1].y)
                     lasers[2].move(lasers[2].x + constants.LASER_SPEED, 
@@ -714,7 +723,7 @@ def game_scene():
                         firing_type = 0
                         firing_direction = 0
                 # Downwards shot
-                elif lasers[1].x > 0 and firing_direction == 3:
+                elif lasers[laser_number].y > 0 and firing_direction == 3:
                     lasers[1].move(lasers[1].x, lasers[1].y + 
                                    constants.LASER_SPEED)
                     lasers[2].move(lasers[2].x - constants.LASER_SPEED,
@@ -733,7 +742,7 @@ def game_scene():
                         firing_type = 0
                         firing_direction = 0
                 # Left shot
-                elif lasers[1].y > 0 and firing_direction == 4:
+                elif lasers[laser_number].x > -17 and firing_direction == 4:
                     lasers[1].move(lasers[1].x - constants.LASER_SPEED, 
                                    lasers[1].y)
                     lasers[2].move(lasers[2].x - constants.LASER_SPEED, 
@@ -753,7 +762,7 @@ def game_scene():
                         firing_direction = 0
             # Around shot
             if firing_type == 3:
-                if lasers[laser_number].x > 0:
+                if lasers[laser_number].x > -17:
                     lasers[0].move(lasers[0].x, lasers[0].y -
                                    constants.LASER_SPEED)
                     lasers[1].move(lasers[1].x + constants.LASER_SPEED, 
@@ -859,23 +868,208 @@ def game_scene():
                             sound.stop()
                             sound.play(load_sound)
 
+        # This detects if any lasers hit asteroids heading right
+        for laser_number in range(len(lasers)):
+            if lasers[laser_number].x > 0:
+                for asteroid_number in range(len(left_asteroids)):
+                    if left_asteroids[asteroid_number].x > 0:
+                        if stage.collide(left_asteroids[asteroid_number].x + 1,
+                                         left_asteroids[asteroid_number].y + 1,
+                                         left_asteroids[asteroid_number].x + 15,
+                                         left_asteroids[asteroid_number].y + 15,
+                                         lasers[laser_number].x + 3,
+                                         lasers[laser_number].y + 3,
+                                         lasers[laser_number].x + 13,
+                                         lasers[laser_number].y + 13):
+                            left_asteroids[asteroid_number].move(constants.OFF_SCREEN_X,
+                                                                 constants.OFF_SCREEN_Y)
+                            lasers[laser_number].move(constants.OFF_SCREEN_X,
+                                                      constants.OFF_SCREEN_Y)
+                            sound.stop()
+                            sound.play(impact_sound)
+                            reset_left_asteroid()
+                            asteroid_counter = asteroid_counter + 1
+
+        # This detects if any lasers hit asteroids heading down
+        for laser_number in range(len(lasers)):
+            if lasers[laser_number].x > 0:
+                for asteroid_number in range(len(top_asteroids)):
+                    if top_asteroids[asteroid_number].x > 0:
+                        if stage.collide(top_asteroids[asteroid_number].x + 1,
+                                         top_asteroids[asteroid_number].y + 1,
+                                         top_asteroids[asteroid_number].x + 15,
+                                         top_asteroids[asteroid_number].y + 15,
+                                         lasers[laser_number].x + 3,
+                                         lasers[laser_number].y + 3,
+                                         lasers[laser_number].x + 13,
+                                         lasers[laser_number].y + 13):
+                            top_asteroids[asteroid_number].move(constants.OFF_SCREEN_X,
+                                                                constants.OFF_SCREEN_Y)
+                            lasers[laser_number].move(constants.OFF_SCREEN_X,
+                                                      constants.OFF_SCREEN_Y)
+                            sound.stop()
+                            sound.play(impact_sound)
+                            reset_top_asteroid()
+                            asteroid_counter = asteroid_counter + 1
+
+        # This detects if any lasers hit asteroids heading left
+        for laser_number in range(len(lasers)):
+            if lasers[laser_number].x > 0:
+                for asteroid_number in range(len(right_asteroids)):
+                    if right_asteroids[asteroid_number].x > 0:
+                        if stage.collide(right_asteroids[asteroid_number].x + 1,
+                                         right_asteroids[asteroid_number].y + 1,
+                                         right_asteroids[asteroid_number].x + 15,
+                                         right_asteroids[asteroid_number].y + 15,
+                                         lasers[laser_number].x + 3,
+                                         lasers[laser_number].y + 3,
+                                         lasers[laser_number].x + 13,
+                                         lasers[laser_number].y + 13):
+                            right_asteroids[asteroid_number].move(constants.OFF_SCREEN_X,
+                                                                  constants.OFF_SCREEN_Y)
+                            lasers[laser_number].move(constants.OFF_SCREEN_X,
+                                                      constants.OFF_SCREEN_Y)
+                            sound.stop()
+                            sound.play(impact_sound)
+                            reset_right_asteroid()
+                            asteroid_counter = asteroid_counter + 1
+
+        # This detects if any lasers hit asteroids heading up
+        for laser_number in range(len(lasers)):
+            if lasers[laser_number].x > 0:
+                for asteroid_number in range(len(bottom_asteroids)):
+                    if bottom_asteroids[asteroid_number].x > 0:
+                        if stage.collide(bottom_asteroids[asteroid_number].x + 1,
+                                         bottom_asteroids[asteroid_number].y + 1,
+                                         bottom_asteroids[asteroid_number].x + 15,
+                                         bottom_asteroids[asteroid_number].y + 15,
+                                         lasers[laser_number].x + 3,
+                                         lasers[laser_number].y + 3,
+                                         lasers[laser_number].x + 13,
+                                         lasers[laser_number].y + 13):
+                            bottom_asteroids[asteroid_number].move(constants.OFF_SCREEN_X,
+                                                                   constants.OFF_SCREEN_Y)
+                            lasers[laser_number].move(constants.OFF_SCREEN_X,
+                                                      constants.OFF_SCREEN_Y)
+                            sound.stop()
+                            sound.play(impact_sound)
+                            reset_bottom_asteroid()
+                            asteroid_counter = asteroid_counter + 1
+
+        # This detects a collision between the ship and asteroids going right
+        for asteroid_number in range(len(left_asteroids)):
+            if left_asteroids[asteroid_number].x > 0:
+                if stage.collide(left_asteroids[asteroid_number].x + 1,
+                                 left_asteroids[asteroid_number].y + 1,
+                                 left_asteroids[asteroid_number].x + 15,
+                                 left_asteroids[asteroid_number].y + 15,
+                                 ship.x + 3, ship.y + 3, ship.x + 12, ship.y + 12):
+                    sound.stop()
+                    sound.play(crash_sound)
+                    time.sleep(4.0)
+                    sound.stop()
+                    game_over_scene(asteroid_counter, start_time)
+
+        # This detects a collision between the ship and asteroids going down
+        for asteroid_number in range(len(top_asteroids)):
+            if top_asteroids[asteroid_number].x > 0:
+                if stage.collide(top_asteroids[asteroid_number].x + 1,
+                                 top_asteroids[asteroid_number].y + 1,
+                                 top_asteroids[asteroid_number].x + 15,
+                                 top_asteroids[asteroid_number].y + 15,
+                                 ship.x + 3, ship.y + 3, ship.x + 12, ship.y + 12):
+                    sound.stop()
+                    sound.play(crash_sound)
+                    time.sleep(4.0)
+                    sound.stop()
+                    game_over_scene(asteroid_counter, start_time)
+
+        # This detects a collision between the ship and asteroids going left
+        for asteroid_number in range(len(right_asteroids)):
+            if right_asteroids[asteroid_number].x > 0:
+                if stage.collide(right_asteroids[asteroid_number].x + 1,
+                                 right_asteroids[asteroid_number].y + 1,
+                                 right_asteroids[asteroid_number].x + 15,
+                                 right_asteroids[asteroid_number].y + 15,
+                                 ship.x + 3, ship.y + 3, ship.x + 12, ship.y + 12):
+                    sound.stop()
+                    sound.play(crash_sound)
+                    time.sleep(4.0)
+                    sound.stop()
+                    game_over_scene(asteroid_counter, start_time)
+
+    # This detects a collision between the ship and asteroids going up
+        for asteroid_number in range(len(bottom_asteroids)):
+            if bottom_asteroids[asteroid_number].x > 0:
+                if stage.collide(bottom_asteroids[asteroid_number].x + 1,
+                                 bottom_asteroids[asteroid_number].y + 1,
+                                 bottom_asteroids[asteroid_number].x + 15,
+                                 bottom_asteroids[asteroid_number].y + 15,
+                                 ship.x + 3, ship.y + 3, ship.x + 12, ship.y + 12):
+                    sound.stop()
+                    sound.play(crash_sound)
+                    time.sleep(4.0)
+                    sound.stop()
+                    game_over_scene(asteroid_counter, start_time)
+
         # redraw sprite list
         game.render_sprites(left_asteroids + right_asteroids + top_asteroids +
                             bottom_asteroids + sprites + lasers + ammo)
         game.tick()
 
 
-def game_over_scene(final_score):
+def game_over_scene(asteroids_destroyed, time_start):
     # this function is the game over scene
+
+    # The image bank for the game
+    image_bank_1 = stage.Bank.from_bmp16("gamesprite.bmp")
+
+    # sets the background to image 1 in the bank
+    background = stage.Grid(image_bank_1, 10, 8)
+    for x_location in range(constants.SCREEN_GRID_X):
+        for y_location in range(constants.SCREEN_GRID_X):
+            background.tile(x_location, y_location, 1)
+
+    # Converting epoch time to seconds
+    seconds_survived = time.time() - time_start - 4
+
+    # The list that holds all the text
+    text = []
+
+    # The game over text
+    text1 = stage.Text(width=37, height=22, font=None,
+                       palette=constants.MT_GAME_STUDIO_PALETTE, buffer=None)
+    text1.move(50, 5)
+    text1.text("Game Over")
+    text.append(text1)
+
+    # This text displays how many asteroids the user destroyed
+    text2 = stage.Text(width=37, height=22, font=None,
+                       palette=constants.MT_GAME_STUDIO_PALETTE, buffer=None)
+    text2.move(5, 40)
+    text2.text("Asteroids Shot: {0}".format(asteroids_destroyed))
+    text.append(text2)
+
+    # This text displays how many asteroids the user destroyed
+    text3 = stage.Text(width=37, height=22, font=None,
+                       palette=constants.MT_GAME_STUDIO_PALETTE, buffer=None)
+    text3.move(5, 80)
+    text3.text("Alive: {0} seconds".format(seconds_survived))
+    text.append(text3)
+
+    # create a stage for the background to show up on
+    #   and set the frame rate to 60fps
+    game = stage.Stage(ugame.display, 60)
+    # set the layers, items show up in order
+    game.layers = text + [background]
+    # render the background and inital location of sprite list
+    # most likely you will only render background once per scene
+    game.render_block()
 
     # repeat forever, game loop
     while True:
-        # get user input
-
-        # update game logic
-
-        # redraw sprite list
-        pass  # just a placeholder until you write the code
+        # Update game logic
+        pass
 
 
 if __name__ == "__main__":
