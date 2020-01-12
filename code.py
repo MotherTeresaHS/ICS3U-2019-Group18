@@ -364,7 +364,7 @@ def game_scene():
 
     # Setting the ammo generation timer and values
     timer = 0
-    generation_time = random.randint(1500, 2500)
+    generation_time = random.randint(500, 1500)
     ammo_type = 0
     firing_type = 0
     state_of_button = 0
@@ -375,6 +375,7 @@ def game_scene():
     # Getting sounds ready
     laser_sound = open("laser.wav", 'rb')
     crash_sound = open("crash.WAV", 'rb')
+    ammo_sound = open("ammo.wav", 'rb')
     load_sound = open("load.wav", 'rb')
     impact_sound = open("impact.wav", 'rb')
     sound = ugame.audio
@@ -388,6 +389,8 @@ def game_scene():
         around_shot.move(constants.OFF_SCREEN_X, constants.OFF_SCREEN_Y)
         type_of_ammo = random.randint(1, 100)
         ammo_variant = 0
+        sound.stop()
+        sound.play(ammo_sound)
         if type_of_ammo <= 50:
             ammo_variant = 1
             single_shot.move(random.randint(0 + constants.SPRITE_SIZE,
@@ -569,10 +572,11 @@ def game_scene():
                 if timer == generation_time:
                     ammo_type = spawn_ammo()
                     timer = 0
-                    generation_time = random.randint(1500, 2500)
+                    generation_time = random.randint(500, 1500)
                 else:
                     continue
 
+        # Firing ammo using the a button
         if a_button == constants.button_state["button_released"]:
             for laser_number in range(len(lasers)):
                 # No ammo
@@ -657,7 +661,7 @@ def game_scene():
                         firing_direction = 0
                 # Right shot
                 elif lasers[1].y > 0 and firing_direction == 2:
-                    lasers[1].move(lasers[1].x + constants.LASER_SPEED, 
+                    lasers[1].move(lasers[1].x + constants.LASER_SPEED,
                                    lasers[1].y)
                     if lasers[1].x >= constants.OFF_RIGHT_SCREEN:
                         lasers[1].move(constants.OFF_SCREEN_X,
@@ -666,7 +670,7 @@ def game_scene():
                         firing_direction = 0
                 # Downwards shot
                 elif lasers[1].x > 0 and firing_direction == 3:
-                    lasers[1].move(lasers[1].x, lasers[1].y + 
+                    lasers[1].move(lasers[1].x, lasers[1].y +
                                    constants.LASER_SPEED)
                     if lasers[1].y >= constants.OFF_BOTTOM_SCREEN:
                         lasers[1].move(constants.OFF_SCREEN_X,
@@ -675,7 +679,7 @@ def game_scene():
                         firing_direction = 0
                 # Left shot
                 elif lasers[1].y > 0 and firing_direction == 4:
-                    lasers[1].move(lasers[1].x - constants.LASER_SPEED, 
+                    lasers[1].move(lasers[1].x - constants.LASER_SPEED,
                                    lasers[1].y)
                     if lasers[1].x < constants.OFF_LEFT_SCREEN:
                         lasers[1].move(constants.OFF_SCREEN_X,
@@ -688,9 +692,9 @@ def game_scene():
                 if lasers[laser_number].y > -17 and firing_direction == 1:
                     lasers[1].move(lasers[1].x, lasers[1].y
                                    - constants.LASER_SPEED)
-                    lasers[2].move(lasers[2].x + constants.LASER_SPEED, 
+                    lasers[2].move(lasers[2].x + constants.LASER_SPEED,
                                    lasers[2].y - constants.LASER_SPEED)
-                    lasers[3].move(lasers[3].x - constants.LASER_SPEED, 
+                    lasers[3].move(lasers[3].x - constants.LASER_SPEED,
                                    lasers[3].y - constants.LASER_SPEED)
                     if lasers[laser_number].y < constants.OFF_TOP_SCREEN:
                         lasers[1].move(constants.OFF_SCREEN_X,
@@ -705,11 +709,11 @@ def game_scene():
                         firing_direction = 0
                 # Right shot
                 elif lasers[laser_number].x < 176 and firing_direction == 2:
-                    lasers[1].move(lasers[1].x + constants.LASER_SPEED, 
+                    lasers[1].move(lasers[1].x + constants.LASER_SPEED,
                                    lasers[1].y)
-                    lasers[2].move(lasers[2].x + constants.LASER_SPEED, 
+                    lasers[2].move(lasers[2].x + constants.LASER_SPEED,
                                    lasers[2].y - constants.LASER_SPEED)
-                    lasers[3].move(lasers[3].x + constants.LASER_SPEED, 
+                    lasers[3].move(lasers[3].x + constants.LASER_SPEED,
                                    lasers[3].y + constants.LASER_SPEED)
                     if lasers[1].x >= constants.OFF_RIGHT_SCREEN:
                         lasers[1].move(constants.OFF_SCREEN_X,
@@ -724,7 +728,7 @@ def game_scene():
                         firing_direction = 0
                 # Downwards shot
                 elif lasers[laser_number].y > 0 and firing_direction == 3:
-                    lasers[1].move(lasers[1].x, lasers[1].y + 
+                    lasers[1].move(lasers[1].x, lasers[1].y +
                                    constants.LASER_SPEED)
                     lasers[2].move(lasers[2].x - constants.LASER_SPEED,
                                    lasers[2].y + constants.LASER_SPEED)
@@ -743,11 +747,11 @@ def game_scene():
                         firing_direction = 0
                 # Left shot
                 elif lasers[laser_number].x > -17 and firing_direction == 4:
-                    lasers[1].move(lasers[1].x - constants.LASER_SPEED, 
+                    lasers[1].move(lasers[1].x - constants.LASER_SPEED,
                                    lasers[1].y)
-                    lasers[2].move(lasers[2].x - constants.LASER_SPEED, 
+                    lasers[2].move(lasers[2].x - constants.LASER_SPEED,
                                    lasers[2].y + constants.LASER_SPEED)
-                    lasers[3].move(lasers[3].x - constants.LASER_SPEED, 
+                    lasers[3].move(lasers[3].x - constants.LASER_SPEED,
                                    lasers[3].y - constants.LASER_SPEED)
                     if lasers[1].x < constants.OFF_LEFT_SCREEN:
                         lasers[1].move(constants.OFF_SCREEN_X,
@@ -765,19 +769,19 @@ def game_scene():
                 if lasers[laser_number].x > -17:
                     lasers[0].move(lasers[0].x, lasers[0].y -
                                    constants.LASER_SPEED)
-                    lasers[1].move(lasers[1].x + constants.LASER_SPEED, 
+                    lasers[1].move(lasers[1].x + constants.LASER_SPEED,
                                    lasers[1].y - constants.LASER_SPEED)
                     lasers[2].move(lasers[2].x + constants.EXTRA_LASER_SPEED,
                                    lasers[2].y)
-                    lasers[3].move(lasers[3].x + constants.LASER_SPEED, 
+                    lasers[3].move(lasers[3].x + constants.LASER_SPEED,
                                    lasers[3].y + constants.LASER_SPEED)
                     lasers[4].move(lasers[4].x, lasers[4].y +
                                    constants.LASER_SPEED)
-                    lasers[5].move(lasers[5].x - constants.LASER_SPEED, 
+                    lasers[5].move(lasers[5].x - constants.LASER_SPEED,
                                    lasers[5].y + constants.LASER_SPEED)
                     lasers[6].move(lasers[6].x - constants.EXTRA_LASER_SPEED,
                                    lasers[6].y)
-                    lasers[7].move(lasers[7].x - constants.LASER_SPEED, 
+                    lasers[7].move(lasers[7].x - constants.LASER_SPEED,
                                    lasers[7].y - constants.LASER_SPEED)
                     if lasers[0].y < constants.OFF_TOP_SCREEN:
                         lasers[0].move(constants.OFF_SCREEN_X,
