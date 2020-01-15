@@ -104,18 +104,6 @@ def mt_splash_scene():
     text1.text("MT Game Studios")
     text.append(text1)
 
-    text2 = stage.Text(width=29, height=14, font=None,
-                       palette=constants.MT_GAME_STUDIO_PALETTE, buffer=None)
-    text2.move(5, 105)
-    text2.text("In association with")
-    text.append(text2)
-
-    text3 = stage.Text(width=29, height=14, font=None,
-                       palette=constants.MT_GAME_STUDIO_PALETTE, buffer=None)
-    text3.move(25, 115)
-    text3.text("Snakob Studios")
-    text.append(text3)
-
     # get sound ready
     # Use this guide to convert your other sounds to something that will work
     #    https://learn.adafruit.com/microcontroller-compatible-audio-file-
@@ -143,9 +131,103 @@ def mt_splash_scene():
 
         # Wait for 3 seconds
         time.sleep(3.0)
+        game_splash_screen()
+
+        # redraw sprite list
+
+def game_splash_screen():
+    # This function is the Snakob Studios splash screen
+
+    # Splash screen image bank
+    image_bank_3 = stage.Bank.from_bmp16("splash_scene.bmp")
+
+    # sets the background to image 1 in the bank
+    background = stage.Grid(image_bank_3, constants.SCREEN_GRID_X, \
+                            constants.SCREEN_GRID_Y)
+
+    # This list holds the text
+    text = []
+
+    # The Snakob Studios text
+    text1 = stage.Text(width=29, height=14, font=None,
+                       palette=constants.MT_GAME_STUDIO_PALETTE, buffer=None)
+    text1.move(25, 20)
+    text1.text("Snakob Studios")
+    text.append(text1)
+
+    # This list holds the sprites for snakob
+    sprites =[]
+
+    # These sprites connect to create snakob
+    bottom_left = stage.Sprite(image_bank_3, 13, 65, 100)
+    sprites.append(bottom_left)
+
+    mid_tail = stage.Sprite(image_bank_3, 14, 81, 100)
+    sprites.append(mid_tail)
+
+    mid_left_neck = stage.Sprite(image_bank_3, 9, 65, 84)
+    sprites.append(mid_left_neck)
+
+    mid_right_neck = stage.Sprite(image_bank_3, 10, 81, 84)
+    sprites.append(mid_right_neck)
+
+    mid_left_side_face = stage.Sprite(image_bank_3, 5, 65, 68)
+    sprites.append(mid_left_side_face)
+
+    right_eye = stage.Sprite(image_bank_3, 6, 81, 68)
+    sprites.append(right_eye)
+
+    left_side_face = stage.Sprite(image_bank_3, 4, 49, 68)
+    sprites.append(left_side_face)
+
+    end_of_tongue = stage.Sprite(image_bank_3, 7, 97, 68)
+    sprites.append(end_of_tongue)
+
+    top_of_left_eye = stage.Sprite(image_bank_3, 1, 65, 52)
+    sprites.append(top_of_left_eye)
+
+    end_of_tail = stage.Sprite(image_bank_3, 3, 97, 52)
+    sprites.append(end_of_tail)
+
+    left_eyebrow = stage.Sprite(image_bank_3, 2, 81, 52)
+    sprites.append(left_eyebrow)
+    
+    bulky_part_tail = stage.Sprite(image_bank_3, 8, 49, 84)
+    sprites.append(bulky_part_tail)
+    
+    lower_tail = stage.Sprite(image_bank_3, 12, 49, 100)
+    sprites.append(lower_tail)
+    
+    extra_pixels = stage.Sprite(image_bank_3, 15, 96, 100)
+    sprites.append(extra_pixels)
+
+    # Get sounds ready
+    hiss_sound = open("hiss.wav", 'rb')
+    sound = ugame.audio
+    sound.stop()
+    sound.mute(False)
+    sound.play(hiss_sound)
+
+    # create a stage for the background to show up on
+    #   and set the frame rate to 60fps
+    game = stage.Stage(ugame.display, 60)
+    # set the layers, items show up in order
+    game.layers = text + sprites + [background]
+    # render the background and inital location of sprite list
+    # most likely you will only render background once per scene
+    game.render_block()
+    
+    # repeat forever, game loop
+    while True:
+        # get user input
+
+        # update game logic
+        time.sleep(3.0)
         menu_scene()
 
         # redraw sprite list
+        game.render_sprites(sprites)
+        game.tick()
 
 
 def menu_scene():
@@ -705,6 +787,9 @@ def game_scene():
                     if lasers[3].y < constants.OFF_TOP_SCREEN:
                         lasers[3].move(constants.OFF_SCREEN_X,
                                        constants.OFF_SCREEN_Y)
+                    if lasers[1].x == constants.OFF_SCREEN_X and \
+                       lasers[2].x == constants.OFF_SCREEN_X and \
+                       lasers[3].x == constants.OFF_SCREEN_X:
                         firing_type = 0
                         firing_direction = 0
                 # Right shot
@@ -724,6 +809,9 @@ def game_scene():
                     if lasers[3].x >= constants.OFF_RIGHT_SCREEN:
                         lasers[3].move(constants.OFF_SCREEN_X,
                                        constants.OFF_SCREEN_Y)
+                    if lasers[1].x == constants.OFF_SCREEN_X and \
+                       lasers[2].x == constants.OFF_SCREEN_X and \
+                       lasers[3].x == constants.OFF_SCREEN_X:
                         firing_type = 0
                         firing_direction = 0
                 # Downwards shot
@@ -743,6 +831,9 @@ def game_scene():
                     if lasers[3].y >= constants.OFF_BOTTOM_SCREEN:
                         lasers[3].move(constants.OFF_SCREEN_X,
                                        constants.OFF_SCREEN_Y)
+                    if lasers[1].x == constants.OFF_SCREEN_X and \
+                       lasers[2].x == constants.OFF_SCREEN_X and \
+                       lasers[3].x == constants.OFF_SCREEN_X:
                         firing_type = 0
                         firing_direction = 0
                 # Left shot
@@ -762,6 +853,9 @@ def game_scene():
                     if lasers[3].x < constants.OFF_LEFT_SCREEN:
                         lasers[3].move(constants.OFF_SCREEN_X,
                                        constants.OFF_SCREEN_Y)
+                    if lasers[1].x == constants.OFF_SCREEN_X and \
+                       lasers[2].x == constants.OFF_SCREEN_X and \
+                       lasers[3].x == constants.OFF_SCREEN_X:
                         firing_type = 0
                         firing_direction = 0
             # Around shot
@@ -807,6 +901,14 @@ def game_scene():
                     if lasers[7].y < constants.OFF_TOP_SCREEN:
                         lasers[7].move(constants.OFF_SCREEN_X,
                                        constants.OFF_SCREEN_Y)
+                    if lasers[0].x == constants.OFF_SCREEN_X and \
+                       lasers[1].x == constants.OFF_SCREEN_X and \
+                       lasers[2].x == constants.OFF_SCREEN_X and \
+                       lasers[3].x == constants.OFF_SCREEN_X and \
+                       lasers[4].x == constants.OFF_SCREEN_X and \
+                       lasers[5].x == constants.OFF_SCREEN_X and \
+                       lasers[6].x == constants.OFF_SCREEN_X and \
+                       lasers[7].x == constants.OFF_SCREEN_X:
                         firing_type = 0
                         firing_direction = 0
 
