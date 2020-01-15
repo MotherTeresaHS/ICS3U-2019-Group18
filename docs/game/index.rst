@@ -4,13 +4,12 @@
 Game
 ****
 
-X
+The following steps are how to create the actual game scene itself.
 
 .. toctree::
    :maxdepth: 1
    :glob:
 
-   Overview <Overview>
    Background <background>
    Space Ship <space_ship>
    Asteroids <asteroids>
