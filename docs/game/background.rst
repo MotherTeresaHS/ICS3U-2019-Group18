@@ -7,8 +7,7 @@ The first thing you will want to do is get the background working on your game s
 
 .. code-block:: python
   :linenos:
-
-# The image bank for the game
+    # The image bank for the game
     image_bank_1 = stage.Bank.from_bmp16("gamesprite.bmp")
 
     # sets the background to image 1 in the bank
