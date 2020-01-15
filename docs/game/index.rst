@@ -10,6 +10,7 @@ X
    :maxdepth: 1
    :glob:
 
+   Overview <Overview>
    Background <background>
    Space Ship <space_ship>
    Asteroids <asteroids>
