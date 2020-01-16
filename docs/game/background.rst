@@ -3,7 +3,7 @@
 Background
 ==========
 
-The first thing you will want to do is get the background working on your game scene. You must first set the image bank to be the game scene image bank. Be sure this is set under your game scene function.
+The first thing you will want to do is get the background working on your game scene. You must first set the image bank to be the game scene image bank. Use a for loop to place the background tile throughout the screen. Be sure this is set under your game scene function.
 
 .. code-block:: python
   :linenos:
