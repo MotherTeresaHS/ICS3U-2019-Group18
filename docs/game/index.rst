@@ -10,6 +10,7 @@ The following steps are how to create the actual game scene itself. Here is the 
    :maxdepth: 1
    :glob:
 
+   Constants <constants>
    Background <background>
    Space Ship <space_ship>
    Asteroids <asteroids>
