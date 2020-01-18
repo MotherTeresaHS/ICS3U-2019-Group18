@@ -17,14 +17,14 @@ If you do not want to get into creating your own assets, other people have alrea
 
 - `MT Studios image bank <https://github.com/jacob-bonner/ICS3U-2019-Group18/blob/master/mt_game_studio.bmp>`_
 - `Snakob Studios image bank <https://github.com/jacob-bonner/ICS3U-2019-Group18/blob/master/splash_scene.bmp>`_
-- `Game and menu image bank <https://github.com/jacob-bonner/ICS3U-2019-Group18/blob/master/gamesprites.bmp`_
-- `Snakob hiss sound <https://github.com/jacob-bonner/ICS3U-2019-Group18/blob/master/hiss.wav`_
-- `Coin sound <https://github.com/jacob-bonner/ICS3U-2019-Group18/blob/master/coin.wav`_
-- `Ammo spawn sound <https://github.com/jacob-bonner/ICS3U-2019-Group18/blob/master/ammo.wav`_
-- `Ammo collection sound <https://github.com/jacob-bonner/ICS3U-2019-Group18/blob/master/load.wav`_
-- `Firing laser sound <https://github.com/jacob-bonner/ICS3U-2019-Group18/blob/master/laser.wav`_
-- `Asteroid destruction sound <https://github.com/jacob-bonner/ICS3U-2019-Group18/blob/master/impact.wav`_
-- `Asteroid collision sound <https://github.com/jacob-bonner/ICS3U-2019-Group18/blob/master/crash.WAV`_
+- `Game and menu image bank <https://github.com/jacob-bonner/ICS3U-2019-Group18/blob/master/gamesprites.bmp>`_
+- `Snakob hiss sound <https://github.com/jacob-bonner/ICS3U-2019-Group18/blob/master/hiss.wav>`_
+- `Coin sound <https://github.com/jacob-bonner/ICS3U-2019-Group18/blob/master/coin.wav>`_
+- `Ammo spawn sound <https://github.com/jacob-bonner/ICS3U-2019-Group18/blob/master/ammo.wav>`_
+- `Ammo collection sound <https://github.com/jacob-bonner/ICS3U-2019-Group18/blob/master/load.wav>`_
+- `Firing laser sound <https://github.com/jacob-bonner/ICS3U-2019-Group18/blob/master/laser.wav>`_
+- `Asteroid destruction sound <https://github.com/jacob-bonner/ICS3U-2019-Group18/blob/master/impact.wav>`_
+- `Asteroid collision sound <https://github.com/jacob-bonner/ICS3U-2019-Group18/blob/master/crash.WAV>`_
 
 Please download the assets and place them on the PyBadge, in the root directory. Your previoud "Hello, World!" program should restart and run again each time you load a new file onto the PyBadge, hopefully with no errors once more.
 
