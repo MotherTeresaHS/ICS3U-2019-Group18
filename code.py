@@ -580,6 +580,7 @@ def game_scene():
         bottom_asteroids.append(single_down_asteroid)
     reset_bottom_asteroid()
 
+    # This variable records the time the game scene launched
     start_time = time.time()
 
     # create a stage for the background to show up on
