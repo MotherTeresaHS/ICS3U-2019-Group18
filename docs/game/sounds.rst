@@ -26,7 +26,7 @@ To load the sounds, you need to open up the sounds in your game function. You wi
     sound.stop()
     sound.mute(False)
 
-You then need to add them where needed. For example, when you pick up an ammo pack, the load sound should play. Or, when the spawn ammo function is called, the ammo sound plays. You can do this by using the sound.play function and passing it in the sound you want to play. Always make sure a sound.stop is included before you play the new sound as to not distract from a sound that may currently be playing.
+You then need to add them where needed. For example, when you pick up an ammo pack, the load sound should play. Or, when the spawn ammo function is called, the ammo sound plays. You can do this by using the sound.play(*your desired sound*) function and passing it in the sound you want to play. Always make sure a sound.stop() is included before you play the new sound as to not distract from a sound that may currently be playing.
 
 .. code-block:: python
   :linenos:

@@ -3,7 +3,7 @@
 Asteroids
 ==========
 
-Once you have your spaceship working you can now add functionality for the asteroids. To have asteroids at each side of the screen, you will need four different lists (one for each side). Use a for loop to create asteroids up to the set amount from your constants file, and append the asteroids to their lists. This is to be done outside your gameloop.
+Once you have your spaceship working you can now add functionality for the asteroids. To have asteroids at each side of the screen, you will need four different lists (one for each side). Use a for loop to create asteroids up to the set amount from your constants file, and append the asteroids to their lists. This is to be done outside your gameloop. Be sure your asteroids have been painted and rendered on screen.
 
 .. code-block:: python
   :linenos:
@@ -45,7 +45,7 @@ Once you have your spaceship working you can now add functionality for the aster
         bottom_asteroids.append(single_down_asteroid)
     reset_bottom_asteroid()
 
-When you have your asteroids ready, you will need to be able to have them move across the screen. Once again, each side of their screen will need a way to scroll lasers. For this, create a for loop in your game loop that itterates through all the asteroids in a list. An if statement within will deterimine if the asteroid isn't in purgatory off screen, and will scroll across the screen in the desired direction. Within said if statement should be another if statement determining if the asteroid has reached the other side of the screen. If the asteroid has, it will be moved back into purgatory off screen and wait to be sent out again.
+When you have your asteroids ready, you will need to be able to have them move across the screen. Once again, each side of their screen will need a way to scroll asteroids. For this, create a for loop in your game loop that itterates through all the asteroids in a list. An if statement within will deterimine if the asteroid isn't in purgatory off screen, and will scroll across the screen in the desired direction. Within said if statement should be another if statement determining if the asteroid has reached the other side of the screen. If the asteroid has, it will be moved back into purgatory off screen and wait to be sent out again.
 
 .. code-block:: python
   :linenos:
