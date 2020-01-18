@@ -37,7 +37,7 @@ The next thing you will need to do to ensure it continues to show up is to have 
     game.render_sprites(sprites)
     game.tick()
 
-You will want to make sure your spaceship will be able to move, and keep it from moving off screen. This is all done in the game loop. The first thing you have to do is to set your keys to be watching if a button is being pressed. Next, since your user will be using the D-Pad to move around, you will want to add an if statement to detect if a specific button on the D-Pad. Depending on which button is pressed, your spaceship will move in a different direction. You will also want to make sure your spaceship can't move off screen. You can do this by putting an if statement inside your previous if statement. If the ship's X or Y coordinates goes off the screen limits indicated in your constants file, it will move the ship back on screen.
+You will need to paint and render any new sprite list you add using the same methods. Finally, you will want to make sure your spaceship will be able to move, and keep it from moving off screen. This is all done in the game loop. The first thing you have to do is to set your keys to be watching if a button is being pressed. Next, since your user will be using the D-Pad to move around, you will want to add an if statement to detect if a specific button on the D-Pad. Depending on which button is pressed, your spaceship will move in a different direction. You will also want to make sure your spaceship can't move off screen. You can do this by putting an if statement inside your previous if statement. If the ship's X or Y coordinates goes off the screen limits indicated in your constants file, it will move the ship back on screen.
 
 .. code-block:: python
   :linenos:

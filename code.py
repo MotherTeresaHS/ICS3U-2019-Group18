@@ -659,7 +659,7 @@ def game_scene():
                     continue
 
         # Firing ammo using the a button
-        if a_button == constants.button_state["button_released"]:
+        if a_button == constants.button_state["button_just_pressed"]:
             for laser_number in range(len(lasers)):
                 # No ammo
                 if ammo_type == 0:
