@@ -15,5 +15,6 @@ The following steps are how to create the actual game scene itself. Here is the 
    Space Ship <space_ship>
    Asteroids <asteroids>
    Ammo Packs <ammo_packs>
+   Sounds <sounds>
    Lasers <lasers>
    Asteroid Collisions <asteroid_collisions>
