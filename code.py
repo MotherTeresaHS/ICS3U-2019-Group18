@@ -300,7 +300,7 @@ def menu_scene():
             game_scene()
             break
 
-        if keys & ugame.K_SELECT != 0:  # Start button
+        if keys & ugame.K_SELECT != 0:  # Select button
             keys = 0
             ugame.K_SELECT = 0
             rules_scene()
