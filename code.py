@@ -300,7 +300,7 @@ def menu_scene():
             game_scene()
             break
 
-        if keys & ugame.K_SELECT != 0:  # Start button
+        if keys & ugame.K_SELECT != 0:  # Select button
             keys = 0
             ugame.K_SELECT = 0
             rules_scene()
@@ -580,6 +580,7 @@ def game_scene():
         bottom_asteroids.append(single_down_asteroid)
     reset_bottom_asteroid()
 
+    # This variable records the time the game scene launched
     start_time = time.time()
 
     # create a stage for the background to show up on
@@ -659,7 +660,7 @@ def game_scene():
                     continue
 
         # Firing ammo using the a button
-        if a_button == constants.button_state["button_released"]:
+        if a_button == constants.button_state["button_just_pressed"]:
             for laser_number in range(len(lasers)):
                 # No ammo
                 if ammo_type == 0:
