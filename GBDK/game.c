@@ -91,7 +91,7 @@ void setupShip() {
 
 // This function setups up left asteroid
 void setupLeftAsteroids() {
-    leftAsteroid.x = 50;
+    leftAsteroid.x = -40;
     leftAsteroid.y = 50;
     leftAsteroid.width = 8;
     leftAsteroid.height = 8;
@@ -144,9 +144,6 @@ void setupDownAsteroids() {
 void main() {
     // Main game functions
 
-    // Random number seed
-    unsigned int seed = time(NULL);
-
     // Sprite data
     set_sprite_data(0, 8, spriteTiles);
 
@@ -197,30 +194,50 @@ void main() {
         // Movement for the spaceship
         switch(joypad()) {
             case J_LEFT:
-                ship.x -= 5;
-                moveGameCharacter(&ship, ship.x, ship.y);
-                break;
-            case J_RIGHT: 
-                ship.x += 5;
-                moveGameCharacter(&ship, ship.x, ship.y);
-                break;  
-            case J_UP: 
-                ship.y -= 5;
-                moveGameCharacter(&ship, ship.x, ship.y);
-                break; 
-            case J_DOWN: 
-                ship.y += 5;
-                moveGameCharacter(&ship, ship.x, ship.y);
-                break;
+                if(ship.x < 24) {
+                    ship.x = 24;
+                    moveGameCharacter(&ship, ship.x, ship.y);
+                } else {
+                    ship.x -= 5;
+                    moveGameCharacter(&ship, ship.x, ship.y);
+                    break;
+                }
+            case J_RIGHT:
+                if(ship.x > 158) {
+                    ship.x = 158;
+                    moveGameCharacter(&ship, ship.x, ship.y);
+                } else {
+                    ship.x += 5;
+                    moveGameCharacter(&ship, ship.x, ship.y);
+                    break;
+                }
+            case J_UP:
+                if(ship.y < 8) {
+                    ship.y = 8;
+                    moveGameCharacter(&ship, ship.x, ship.y);
+                } else {
+                    ship.y -= 5;
+                    moveGameCharacter(&ship, ship.x, ship.y);
+                    break;
+                }
+            case J_DOWN:
+                if(ship.y > 136) {
+                    ship.y = 136;
+                    moveGameCharacter(&ship, ship.x, ship.y);
+                } else {
+                    ship.y += 5;
+                    moveGameCharacter(&ship, ship.x, ship.y);
+                    break;
+                }
         }
 
-        // Scrolling the left asteroid
-        /*leftAsteroid.x += 10;
+        // Scrolling and reseting for the left asteroid
+        leftAsteroid.x += 10;
         if (leftAsteroid.x >= 160) {
             leftAsteroid.y = ship.y;
-            leftAsteroid.x = 0;
+            leftAsteroid.x = -40;
         }
-        moveGameCharacter(&leftAsteroid, leftAsteroid.x, leftAsteroid.y); */
+        moveGameCharacter(&leftAsteroid, leftAsteroid.x, leftAsteroid.y);
 
         performantdelay(5);
     }
