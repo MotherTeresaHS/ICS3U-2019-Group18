@@ -91,7 +91,7 @@ void setupShip() {
 
 // This function setups up left asteroid
 void setupLeftAsteroids() {
-    leftAsteroid.x = -40;
+    leftAsteroid.x = 0;
     leftAsteroid.y = 50;
     leftAsteroid.width = 8;
     leftAsteroid.height = 8;
@@ -104,8 +104,8 @@ void setupLeftAsteroids() {
 
 // This function setups up upwards asteroid
 void setupUpAsteroids() {
-    upAsteroid.x = 50;
-    upAsteroid.y = 100;
+    upAsteroid.x = 100;
+    upAsteroid.y = 8;
     upAsteroid.width = 8;
     upAsteroid.height = 8;
 
@@ -117,8 +117,8 @@ void setupUpAsteroids() {
 
 // This function setups up right asteroid
 void setupRightAsteroids() {
-    rightAsteroid.x = 100;
-    rightAsteroid.y = 50;
+    rightAsteroid.x = 160;
+    rightAsteroid.y = 100;
     rightAsteroid.width = 8;
     rightAsteroid.height = 8;
 
@@ -130,8 +130,8 @@ void setupRightAsteroids() {
 
 // This function setups up downwards asteroid
 void setupDownAsteroids() {
-    downAsteroid.x = 100;
-    downAsteroid.y = 100;
+    downAsteroid.x = 35;
+    downAsteroid.y = 144;
     downAsteroid.width = 8;
     downAsteroid.height = 8;
 
@@ -198,7 +198,7 @@ void main() {
                     ship.x = 24;
                     moveGameCharacter(&ship, ship.x, ship.y);
                 } else {
-                    ship.x -= 5;
+                    ship.x -= 8;
                     moveGameCharacter(&ship, ship.x, ship.y);
                     break;
                 }
@@ -207,7 +207,7 @@ void main() {
                     ship.x = 158;
                     moveGameCharacter(&ship, ship.x, ship.y);
                 } else {
-                    ship.x += 5;
+                    ship.x += 8;
                     moveGameCharacter(&ship, ship.x, ship.y);
                     break;
                 }
@@ -216,7 +216,7 @@ void main() {
                     ship.y = 8;
                     moveGameCharacter(&ship, ship.x, ship.y);
                 } else {
-                    ship.y -= 5;
+                    ship.y -= 8;
                     moveGameCharacter(&ship, ship.x, ship.y);
                     break;
                 }
@@ -225,19 +225,43 @@ void main() {
                     ship.y = 136;
                     moveGameCharacter(&ship, ship.x, ship.y);
                 } else {
-                    ship.y += 5;
+                    ship.y += 8;
                     moveGameCharacter(&ship, ship.x, ship.y);
                     break;
                 }
         }
 
         // Scrolling and reseting for the left asteroid
-        leftAsteroid.x += 10;
+        leftAsteroid.x += 6;
         if (leftAsteroid.x >= 160) {
             leftAsteroid.y = ship.y;
-            leftAsteroid.x = -40;
+            leftAsteroid.x = 0;
         }
         moveGameCharacter(&leftAsteroid, leftAsteroid.x, leftAsteroid.y);
+
+        // Scrolling and reseting for the right asteroid
+        rightAsteroid.x -= 4;
+        if (rightAsteroid.x <= 1) {
+            rightAsteroid.y = ship.x;
+            rightAsteroid.x = 160;
+        }
+        moveGameCharacter(&rightAsteroid, rightAsteroid.x, rightAsteroid.y);
+
+        // Scrolling and reseting for the upward asteroid
+        upAsteroid.y += 5;
+        if (upAsteroid.y >= 144) {
+            upAsteroid.y = 8;
+            upAsteroid.x = ship.x;
+        }
+        moveGameCharacter(&upAsteroid, upAsteroid.x, upAsteroid.y);
+
+        // Scrolling and reseting for the downward asteroid
+        downAsteroid.y -= 3;
+        if (downAsteroid.y <= 0) {
+            downAsteroid.y = 144;
+            downAsteroid.x = ship.y;
+        }
+        moveGameCharacter(&downAsteroid, downAsteroid.x, downAsteroid.y);
 
         performantdelay(5);
     }
