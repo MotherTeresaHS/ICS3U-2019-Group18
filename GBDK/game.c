@@ -20,7 +20,11 @@ struct GameCharacter leftAsteroid;
 struct GameCharacter upAsteroid;
 struct GameCharacter rightAsteroid;
 struct GameCharacter downAsteroid;
+struct GameCharacter laser;
 UBYTE spritesize = 8;
+
+// The death determination variable
+int deathCounter = 0;
 
 void performantdelay(UINT8 numloops) {
     // This function is a performance delayer
@@ -74,6 +78,12 @@ void fadein() {
 // This function assembles games sprites
 void moveGameCharacter(struct GameCharacter* character, UINT8 x, UINT8 y) {
     move_sprite(character->spritids[0], x, y);
+}
+
+// This function detects if two sprites have collided
+UBYTE checkCollisions(struct GameCharacter* one, struct GameCharacter* two){
+    return (one->x >= two->x && one->x <= two->x + two->width) && (one->y >= two->y && one->y <= two->y + two->height)
+           || (two->x >= one->x && two->x <= one->x + one->width) && (two->y >= one->y && two->y <= one->y + one->height);
 }
 
 // This function setups up ship
@@ -141,6 +151,85 @@ void setupDownAsteroids() {
     moveGameCharacter(&downAsteroid, downAsteroid.x, downAsteroid.y);
 }
 
+// This function setups up laser
+void setupLaser() {
+    laser.x = 180;
+    laser.y = 180;
+    laser.width = 8;
+    laser.height = 8;
+
+    set_sprite_tile(6, 6);
+    laser.spritids[0] = 6;
+
+    moveGameCharacter(&laser, laser.x, laser.y);
+}
+
+// This function fires a laser
+void shootLaser() {
+    // Moving the laser into its starting position
+    laser.x = ship.x;
+    laser.y = ship.y;
+    moveGameCharacter(&laser, laser.x, laser.y);
+
+    if(joypad() & J_A) {
+        /*NR52_REG = 0x80;
+        NR51_REG = 0x11;
+        NR50_REG = 0x77;
+
+        NR10_REG = 0x1E;
+        NR11_REG = 0x10;
+        NR12_REG = 0xF3;
+        NR13_REG = 0x00;
+        NR14_REG = 0x87;*/
+
+        // Scrolling the laser upwards across the screen
+        while(laser.x != 0){
+            performantdelay(5);
+            laser.y -= 10;
+            scroll_sprite(6,0,-10);
+            if(laser.y < -245){
+                laser.y = -246;
+                laser.x = -246;
+                moveGameCharacter(&laser, laser.x, laser.y);
+                break;
+            }
+        }
+    }
+
+    // Checking for collisions between the laser and the left asteroid
+    if(!checkCollisions(&laser, &leftAsteroid)){
+        laser.x = 180;
+        laser.y = 180;
+        leftAsteroid.x = 160;
+    }
+}
+
+// This is a specialised function for the game over scene
+void gameOver() {
+    // Moving sprites off screen
+    ship.x = 180;
+    leftAsteroid.x = 180;
+    rightAsteroid.x = 180;
+    upAsteroid.x = 180;
+    downAsteroid.x = 180;
+    laser.x = 180;
+    moveGameCharacter(&ship, ship.x, ship.y);
+    moveGameCharacter(&leftAsteroid, leftAsteroid.x, leftAsteroid.y);
+    moveGameCharacter(&rightAsteroid, rightAsteroid.x, rightAsteroid.y);
+    moveGameCharacter(&downAsteroid, downAsteroid.x, downAsteroid.y);
+    moveGameCharacter(&upAsteroid, upAsteroid.x, upAsteroid.y);
+    moveGameCharacter(&laser, laser.x, laser.y);
+
+    // Game Over and restart prompt text
+    printf("\n \n \n \n \n \n \n ====Game  Over====");
+    //printf("\n \n ==Press 'Start'==");
+    //printf("\n ===to restart===");
+
+    // Waiting for the user to restart the game by pressing start
+    //waitpad(J_START);
+    //main();
+}
+
 void main() {
     // Main game functions
 
@@ -156,7 +245,7 @@ void main() {
     DISPLAY_ON;
 
     // Waiting for the user to press start to swap and fade out the scenes
-    waitpad(J_START);
+    performantdelay(100);
     fadeout();
 
     // Setting background tiles and data for menu scene
@@ -188,9 +277,10 @@ void main() {
     setupUpAsteroids();
     setupRightAsteroids();
     setupDownAsteroids();
+    setupLaser();
 
     // Game loop
-    while(1) {
+    while(deathCounter == 0) {
         // Movement for the spaceship
         switch(joypad()) {
             case J_LEFT:
@@ -229,6 +319,8 @@ void main() {
                     moveGameCharacter(&ship, ship.x, ship.y);
                     break;
                 }
+            case J_A:
+                shootLaser();
         }
 
         // Scrolling and reseting for the left asteroid
@@ -263,7 +355,30 @@ void main() {
         }
         moveGameCharacter(&downAsteroid, downAsteroid.x, downAsteroid.y);
 
+        // Checks for a collsion between the ship and the left asteroid
+        if(checkCollisions(&ship, &leftAsteroid)) {
+            deathCounter = 1;
+            gameOver();
+        }
+
+        // Checks for a collision between the ship and the right asteroid
+        if(checkCollisions(&ship, &rightAsteroid)) {
+            deathCounter = 1;
+            gameOver();
+        }
+
+        // Checks for a collision between the ship and the upwards asteroid
+        if(checkCollisions(&ship, &upAsteroid)) {
+            deathCounter = 1;
+            gameOver();
+        }
+
+        // Checks for a collision between the ship and the downwards asteroid
+        if(checkCollisions(&ship, &downAsteroid)) {
+            deathCounter = 1;
+            gameOver();
+        }
+
         performantdelay(5);
     }
-
 }
