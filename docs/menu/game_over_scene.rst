@@ -34,22 +34,22 @@ The next thing to display on screen is the text: the game over text, the number 
     text = []
 
     # The game over text
-    text1 = stage.Text(width=37, height=22, font=None,
-                       palette=constants.MT_GAME_STUDIO_PALETTE, buffer=None)
+    text1 = stage.Text(width=45, height=30, font=None,
+                       palette=constants.SCORE_PALETTE, buffer=None)
     text1.move(50, 5)
     text1.text("Game Over")
     text.append(text1)
 
     # This text displays how many asteroids the user destroyed
-    text2 = stage.Text(width=37, height=22, font=None,
-                       palette=constants.MT_GAME_STUDIO_PALETTE, buffer=None)
+    text2 = stage.Text(width=45, height=30, font=None,
+                       palette=constants.SCORE_PALETTE, buffer=None)
     text2.move(5, 40)
     text2.text("Asteroids Shot: {0}".format(asteroids_destroyed))
     text.append(text2)
 
     # This text displays how many asteroids the user destroyed
-    text3 = stage.Text(width=37, height=22, font=None,
-                       palette=constants.MT_GAME_STUDIO_PALETTE, buffer=None)
+    text3 = stage.Text(width=45, height=30, font=None,
+                       palette=constants.SCORE_PALETTE, buffer=None)
     text3.move(5, 80)
     text3.text("Alive: {0} seconds".format(seconds_survived))
     text.append(text3)
