@@ -80,9 +80,11 @@ void moveGameCharacter(struct GameCharacter* character, UINT8 x, UINT8 y) {
 }
 
 // This function detects if two sprites have collided
-UBYTE checkCollisions(struct GameCharacter* one, struct GameCharacter* two){
-    return (one->x >= two->x && one->x <= two->x + two->width) && (one->y >= two->y && one->y <= two->y + two->height)
-           || (two->x >= one->x && two->x <= one->x + one->width) && (two->y >= one->y && two->y <= one->y + one->height);
+UBYTE checkCollisions(struct GameCharacter* one, struct GameCharacter* two) {
+    return (one->x >= two->x && one->x <= two->x + two->width) && \
+           (one->y >= two->y && one->y <= two->y + two->height)
+           || (two->x >= one->x && two->x <= one->x + one->width) && \
+           (two->y >= one->y && two->y <= one->y + one->height);
 }
 
 // This function setups up ship
@@ -166,12 +168,6 @@ void gameOver() {
 
     // Game Over and restart prompt text
     printf("\n \n \n \n \n \n \n ====Game  Over====");
-    //printf("\n \n ==Press 'Start'==");
-    //printf("\n ===to restart===");
-
-    // Waiting for the user to restart the game by pressing start
-    //waitpad(J_START);
-    //main();
 }
 
 void main() {
@@ -179,11 +175,6 @@ void main() {
 
     // Sprite data
     set_sprite_data(0, 8, spriteTiles);
-
-    // Setting sound channels and volume
-    //NR52_REG = 0x80;
-    //NR50_REG = 0x77;
-    //NR51_REG = 0xFF;
 
     // Setting the Snakob Studios splash screen tiles and data
     set_bkg_data(0, 100, snakobSceneData);
@@ -239,11 +230,11 @@ void main() {
     setupDownAsteroids();
 
     // Game loop
-    while(deathCounter == 0) {
+    while (deathCounter == 0) {
         // Movement for the spaceship
-        switch(joypad()) {
+        switch (joypad()) {
             case J_LEFT:
-                if(ship.x < 24) {
+                if (ship.x < 24) {
                     ship.x = 24;
                     moveGameCharacter(&ship, ship.x, ship.y);
                 } else {
@@ -252,7 +243,7 @@ void main() {
                     break;
                 }
             case J_RIGHT:
-                if(ship.x > 158) {
+                if (ship.x > 158) {
                     ship.x = 158;
                     moveGameCharacter(&ship, ship.x, ship.y);
                 } else {
@@ -261,7 +252,7 @@ void main() {
                     break;
                 }
             case J_UP:
-                if(ship.y < 8) {
+                if (ship.y < 8) {
                     ship.y = 8;
                     moveGameCharacter(&ship, ship.x, ship.y);
                 } else {
@@ -270,7 +261,7 @@ void main() {
                     break;
                 }
             case J_DOWN:
-                if(ship.y > 136) {
+                if (ship.y > 136) {
                     ship.y = 136;
                     moveGameCharacter(&ship, ship.x, ship.y);
                 } else {
@@ -313,10 +304,10 @@ void main() {
         moveGameCharacter(&downAsteroid, downAsteroid.x, downAsteroid.y);
 
         // Checks for a collsion between the ship and the left asteroid
-        if(checkCollisions(&ship, &leftAsteroid)) {
+        if (checkCollisions(&ship, &leftAsteroid)) {
             // Variable updated to end game loop
             deathCounter = 1;
-            
+
             // Death sound
             NR52_REG = 0x80;
             NR51_REG = 0x11;
@@ -327,13 +318,10 @@ void main() {
             NR12_REG = 0xF3;
             NR13_REG = 0x00;
             NR14_REG = 0x87;
-
-            // Calling the game over scene
-            gameOver();
         }
 
         // Checks for a collision between the ship and the right asteroid
-        if(checkCollisions(&ship, &rightAsteroid)) {
+        if (checkCollisions(&ship, &rightAsteroid)) {
             // Variable updated to end game loop
             deathCounter = 1;
 
@@ -347,16 +335,13 @@ void main() {
             NR12_REG = 0xF3;
             NR13_REG = 0x00;
             NR14_REG = 0x87;
-            
-            // Game over scene
-            gameOver();
         }
 
         // Checks for a collision between the ship and the upwards asteroid
-        if(checkCollisions(&ship, &upAsteroid)) {
+        if (checkCollisions(&ship, &upAsteroid)) {
             // Variable updated to end game loop
             deathCounter = 1;
-            
+
             // Death sound
             NR52_REG = 0x80;
             NR51_REG = 0x11;
@@ -367,16 +352,13 @@ void main() {
             NR12_REG = 0xF3;
             NR13_REG = 0x00;
             NR14_REG = 0x87;
-            
-            // Game over scene
-            gameOver();
         }
 
         // Checks for a collision between the ship and the downwards asteroid
-        if(checkCollisions(&ship, &downAsteroid)) {
+        if (checkCollisions(&ship, &downAsteroid)) {
             // Variable updated to end game loop
             deathCounter = 1;
-            
+
             // Death sound
             NR52_REG = 0x80;
             NR51_REG = 0x11;
@@ -387,11 +369,13 @@ void main() {
             NR12_REG = 0xF3;
             NR13_REG = 0x00;
             NR14_REG = 0x87;
-            
-            // Game over scene
-            gameOver();
         }
 
         performantdelay(5);
+    }
+
+    performantdelay(50);
+    if (deathCounter == 1) {
+        gameOver();
     }
 }
