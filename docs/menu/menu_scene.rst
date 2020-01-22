@@ -37,20 +37,20 @@ There are also three instances of text: the title, and two instructional texts, 
     # The list that holds all the text
     text = []
 
-    text1 = stage.Text(width=37, height=22, font=None,
-                       palette=constants.MT_GAME_STUDIO_PALETTE, buffer=None)
+    text1 = stage.Text(width=45, height=30, font=None,
+                       palette=constants.SCORE_PALETTE, buffer=None)
     text1.move(20, 20)
     text1.text("Asteroid Dodger")
     text.append(text1)
 
-    text2 = stage.Text(width=37, height=22, font=None,
-                       palette=constants.MT_GAME_STUDIO_PALETTE, buffer=None)
+    text2 = stage.Text(width=45, height=30, font=None,
+                       palette=constants.SCORE_PALETTE, buffer=None)
     text2.move(15, 80)
     text2.text("'Start' to begin")
     text.append(text2)
 
-    text3 = stage.Text(width=37, height=22, font=None,
-                       palette=constants.MT_GAME_STUDIO_PALETTE, buffer=None)
+    text3 = stage.Text(width=45, height=30, font=None,
+                       palette=constants.SCORE_PALETTE, buffer=None)
     text3.move(8, 100)
     text3.text("'Select' for rules")
     text.append(text3)

@@ -43,8 +43,8 @@ Remember when creating your constants that they should all be written in capital
     OFF_SCREEN_X = -500
     OFF_SCREEN_Y = -100
     ASTEROID_SPEED = 1
-    LASER_SPEED = 1
-    EXTRA_LASER_SPEED = 2
+    LASER_SPEED = 2
+    EXTRA_LASER_SPEED = 3
 
 You will also want colour palettes for your text. Two will be provided here: one for the MT Studios splash scene, while the other is a more generic score palette.
 

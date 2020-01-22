@@ -24,8 +24,8 @@ You must also display the Snakob Studios title text. Similar to the MT splash sc
     text = []
 
     # The Snakob Studios text
-    text1 = stage.Text(width=29, height=14, font=None,
-                       palette=constants.MT_GAME_STUDIO_PALETTE, buffer=None)
+    text1 = stage.Text(width=45, height=30, font=None,
+                       palette=constants.SCORE_PALETTE, buffer=None)
     text1.move(25, 20)
     text1.text("Snakob Studios")
     text.append(text1)

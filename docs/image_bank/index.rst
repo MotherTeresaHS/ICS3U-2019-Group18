@@ -17,7 +17,7 @@ If you do not want to get into creating your own assets, other people have alrea
 
 - `MT Studios image bank <https://github.com/jacob-bonner/ICS3U-2019-Group18/blob/master/mt_game_studio.bmp>`_
 - `Snakob Studios image bank <https://github.com/jacob-bonner/ICS3U-2019-Group18/blob/master/splash_scene.bmp>`_
-- `Game and menu image bank <https://github.com/jacob-bonner/ICS3U-2019-Group18/blob/master/gamesprites.bmp>`_
+- `Game and menu image bank <https://github.com/jacob-bonner/ICS3U-2019-Group18/blob/master/gamesprite.bmp>`_
 - `Snakob hiss sound <https://github.com/jacob-bonner/ICS3U-2019-Group18/blob/master/hiss.wav>`_
 - `Coin sound <https://github.com/jacob-bonner/ICS3U-2019-Group18/blob/master/coin.wav>`_
 - `Ammo spawn sound <https://github.com/jacob-bonner/ICS3U-2019-Group18/blob/master/ammo.wav>`_

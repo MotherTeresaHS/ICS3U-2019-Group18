@@ -7,7 +7,6 @@
 import ugame
 import stage
 import board
-import neopixel
 import time
 import random
 
@@ -18,10 +17,6 @@ def blank_white_reset_scene():
     # this function is the splash scene game loop
 
     # do house keeping to ensure everythng is setup
-
-    # set up the NeoPixels
-    pixels = neopixel.NeoPixel(board.NEOPIXEL, 5, auto_write=False)
-    pixels.deinit()  # and turn them all off
 
     # reset sound to be off
     sound = ugame.audio
@@ -149,8 +144,8 @@ def game_splash_screen():
     text = []
 
     # The Snakob Studios text
-    text1 = stage.Text(width=29, height=14, font=None,
-                       palette=constants.MT_GAME_STUDIO_PALETTE, buffer=None)
+    text1 = stage.Text(width=45, height=30, font=None,
+                       palette=constants.SCORE_PALETTE, buffer=None)
     text1.move(25, 20)
     text1.text("Snakob Studios")
     text.append(text1)
@@ -252,20 +247,20 @@ def menu_scene():
     # The list that holds all the text
     text = []
 
-    text1 = stage.Text(width=37, height=22, font=None,
-                       palette=constants.MT_GAME_STUDIO_PALETTE, buffer=None)
+    text1 = stage.Text(width=45, height=30, font=None,
+                       palette=constants.SCORE_PALETTE, buffer=None)
     text1.move(20, 20)
     text1.text("Asteroid Dodger")
     text.append(text1)
 
-    text2 = stage.Text(width=37, height=22, font=None,
-                       palette=constants.MT_GAME_STUDIO_PALETTE, buffer=None)
+    text2 = stage.Text(width=45, height=30, font=None,
+                       palette=constants.SCORE_PALETTE, buffer=None)
     text2.move(15, 80)
     text2.text("'Start' to begin")
     text.append(text2)
 
-    text3 = stage.Text(width=37, height=22, font=None,
-                       palette=constants.MT_GAME_STUDIO_PALETTE, buffer=None)
+    text3 = stage.Text(width=45, height=30, font=None,
+                       palette=constants.SCORE_PALETTE, buffer=None)
     text3.move(8, 100)
     text3.text("'Select' for rules")
     text.append(text3)
@@ -328,44 +323,44 @@ def rules_scene():
     text = []
 
     # The following text displays all the game rules
-    text1 = stage.Text(width=37, height=22, font=None,
-                       palette=constants.MT_GAME_STUDIO_PALETTE, buffer=None)
+    text1 = stage.Text(width=45, height=30, font=None,
+                       palette=constants.SCORE_PALETTE, buffer=None)
     text1.move(50, 5)
     text1.text("Rules")
     text.append(text1)
 
-    text2 = stage.Text(width=34, height=19, font=None,
-                       palette=constants.MT_GAME_STUDIO_PALETTE, buffer=None)
+    text2 = stage.Text(width=45, height=30, font=None,
+                       palette=constants.SCORE_PALETTE, buffer=None)
     text2.move(0, 20)
     text2.text("Use D-Pad to move")
     text.append(text2)
 
-    text3 = stage.Text(width=34, height=19, font=None,
-                       palette=constants.MT_GAME_STUDIO_PALETTE, buffer=None)
+    text3 = stage.Text(width=45, height=30, font=None,
+                       palette=constants.SCORE_PALETTE, buffer=None)
     text3.move(0, 35)
     text3.text("Touch ammo to pickup")
     text.append(text3)
 
-    text4 = stage.Text(width=34, height=19, font=None,
-                       palette=constants.MT_GAME_STUDIO_PALETTE, buffer=None)
+    text4 = stage.Text(width=45, height=30, font=None,
+                       palette=constants.SCORE_PALETTE, buffer=None)
     text4.move(0, 50)
     text4.text("Release 'A' to shoot")
     text.append(text4)
 
-    text5 = stage.Text(width=34, height=19, font=None,
-                       palette=constants.MT_GAME_STUDIO_PALETTE, buffer=None)
+    text5 = stage.Text(width=45, height=30, font=None,
+                       palette=constants.SCORE_PALETTE, buffer=None)
     text5.move(0, 65)
     text5.text("Game ends when")
     text.append(text5)
 
-    text6 = stage.Text(width=34, height=19, font=None,
-                       palette=constants.MT_GAME_STUDIO_PALETTE, buffer=None)
+    text6 = stage.Text(width=45, height=30, font=None,
+                       palette=constants.SCORE_PALETTE, buffer=None)
     text6.move(0, 75)
     text6.text("hit by asteroid")
     text.append(text6)
 
-    text7 = stage.Text(width=34, height=19, font=None,
-                       palette=constants.MT_GAME_STUDIO_PALETTE, buffer=None)
+    text7 = stage.Text(width=45, height=30, font=None,
+                       palette=constants.SCORE_PALETTE, buffer=None)
     text7.move(15, 105)
     text7.text("'Start' to begin")
     text.append(text7)
@@ -404,7 +399,8 @@ def game_scene():
     background = stage.Grid(image_bank_1, 10, 8)
     for x_location in range(constants.SCREEN_GRID_X):
         for y_location in range(constants.SCREEN_GRID_X):
-            background.tile(x_location, y_location, 0)
+            selected_tile = random.randint(0, 1)
+            background.tile(x_location, y_location, selected_tile)
 
     # This list contains the primary sprites
     sprites = []
@@ -446,7 +442,7 @@ def game_scene():
 
     # Setting the ammo generation timer and values
     timer = 0
-    generation_time = random.randint(500, 1500)
+    generation_time = random.randint(300, 1000)
     ammo_type = 0
     firing_type = 0
     state_of_button = 0
@@ -508,7 +504,8 @@ def game_scene():
                                                           (-100, 0 -
                                                            constants.SPRITE_SIZE),
                                                           random.randint
-                                                          (0, constants.SCREEN_Y))
+                                                          (0, constants.SCREEN_Y - 
+                                                           constants.SPRITE_SIZE))
                 break
 
     def reset_top_asteroid():
@@ -529,7 +526,8 @@ def game_scene():
                 right_asteroids[right_asteroid_number].move(random.randint
                                                             (constants.SCREEN_X, 228),
                                                             random.randint
-                                                            (0, constants.SCREEN_Y))
+                                                            (0, constants.SCREEN_Y - 
+                                                             constants.SPRITE_SIZE))
                 break
 
     def reset_bottom_asteroid():
@@ -655,7 +653,7 @@ def game_scene():
                 if timer == generation_time:
                     ammo_type = spawn_ammo()
                     timer = 0
-                    generation_time = random.randint(500, 1500)
+                    generation_time = random.randint(300, 1000)
                 else:
                     continue
 
@@ -1144,22 +1142,22 @@ def game_over_scene(asteroids_destroyed, time_start):
     text = []
 
     # The game over text
-    text1 = stage.Text(width=37, height=22, font=None,
-                       palette=constants.MT_GAME_STUDIO_PALETTE, buffer=None)
+    text1 = stage.Text(width=45, height=30, font=None,
+                       palette=constants.SCORE_PALETTE, buffer=None)
     text1.move(50, 5)
     text1.text("Game Over")
     text.append(text1)
 
     # This text displays how many asteroids the user destroyed
-    text2 = stage.Text(width=37, height=22, font=None,
-                       palette=constants.MT_GAME_STUDIO_PALETTE, buffer=None)
+    text2 = stage.Text(width=45, height=30, font=None,
+                       palette=constants.SCORE_PALETTE, buffer=None)
     text2.move(5, 40)
     text2.text("Asteroids Shot: {0}".format(asteroids_destroyed))
     text.append(text2)
 
     # This text displays how many asteroids the user destroyed
-    text3 = stage.Text(width=37, height=22, font=None,
-                       palette=constants.MT_GAME_STUDIO_PALETTE, buffer=None)
+    text3 = stage.Text(width=45, height=30, font=None,
+                       palette=constants.SCORE_PALETTE, buffer=None)
     text3.move(5, 80)
     text3.text("Alive: {0} seconds".format(seconds_survived))
     text.append(text3)

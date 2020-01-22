@@ -26,44 +26,44 @@ You will need to display all your rules text and a title for your scene. You wil
     text = []
 
     # The following text displays all the game rules
-    text1 = stage.Text(width=37, height=22, font=None,
-                       palette=constants.MT_GAME_STUDIO_PALETTE, buffer=None)
+    text1 = stage.Text(width=45, height=30, font=None,
+                       palette=constants.SCORE_PALETTE, buffer=None)
     text1.move(50, 5)
     text1.text("Rules")
     text.append(text1)
 
-    text2 = stage.Text(width=34, height=19, font=None,
-                       palette=constants.MT_GAME_STUDIO_PALETTE, buffer=None)
+    text2 = stage.Text(width=45, height=30, font=None,
+                       palette=constants.SCORE_PALETTE, buffer=None)
     text2.move(0, 20)
     text2.text("Use D-Pad to move")
     text.append(text2)
 
-    text3 = stage.Text(width=34, height=19, font=None,
-                       palette=constants.MT_GAME_STUDIO_PALETTE, buffer=None)
+    text3 = stage.Text(width=45, height=30, font=None,
+                       palette=constants.SCORE_PALETTE, buffer=None)
     text3.move(0, 35)
     text3.text("Touch ammo to pickup")
     text.append(text3)
 
-    text4 = stage.Text(width=34, height=19, font=None,
-                       palette=constants.MT_GAME_STUDIO_PALETTE, buffer=None)
+    text4 = stage.Text(width=45, height=30, font=None,
+                       palette=constants.SCORE_PALETTE, buffer=None)
     text4.move(0, 50)
     text4.text("Release 'A' to shoot")
     text.append(text4)
 
-    text5 = stage.Text(width=34, height=19, font=None,
-                       palette=constants.MT_GAME_STUDIO_PALETTE, buffer=None)
+    text5 = stage.Text(width=45, height=30, font=None,
+                       palette=constants.SCORE_PALETTE, buffer=None)
     text5.move(0, 65)
     text5.text("Game ends when")
     text.append(text5)
 
-    text6 = stage.Text(width=34, height=19, font=None,
-                       palette=constants.MT_GAME_STUDIO_PALETTE, buffer=None)
+    text6 = stage.Text(width=45, height=30, font=None,
+                       palette=constants.SCORE_PALETTE, buffer=None)
     text6.move(0, 75)
     text6.text("hit by asteroid")
     text.append(text6)
 
-    text7 = stage.Text(width=34, height=19, font=None,
-                       palette=constants.MT_GAME_STUDIO_PALETTE, buffer=None)
+    text7 = stage.Text(width=45, height=30, font=None,
+                       palette=constants.SCORE_PALETTE, buffer=None)
     text7.move(15, 105)
     text7.text("'Start' to begin")
     text.append(text7)

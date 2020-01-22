@@ -31,7 +31,7 @@ Next you will need a function that calls on a random ammo pack and places it som
   
     # Setting the ammo generation timer and values
     timer = 0
-    generation_time = random.randint(500, 1500)
+    generation_time = random.randint(300, 1000)
     ammo_type = 0
     firing_type = 0
     state_of_button = 0
@@ -85,7 +85,7 @@ Something important you will need is a timer that calls your spawn ammo function
                 if timer == generation_time:
                     ammo_type = spawn_ammo()
                     timer = 0
-                    generation_time = random.randint(500, 1500)
+                    generation_time = random.randint(300, 1000)
                 else:
                     continue
 
