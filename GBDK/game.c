@@ -20,7 +20,6 @@ struct GameCharacter leftAsteroid;
 struct GameCharacter upAsteroid;
 struct GameCharacter rightAsteroid;
 struct GameCharacter downAsteroid;
-struct GameCharacter laser;
 UBYTE spritesize = 8;
 
 // The death determination variable
@@ -151,59 +150,6 @@ void setupDownAsteroids() {
     moveGameCharacter(&downAsteroid, downAsteroid.x, downAsteroid.y);
 }
 
-// This function setups up laser
-void setupLaser() {
-    laser.x = 180;
-    laser.y = 180;
-    laser.width = 8;
-    laser.height = 8;
-
-    set_sprite_tile(6, 6);
-    laser.spritids[0] = 6;
-
-    moveGameCharacter(&laser, laser.x, laser.y);
-}
-
-// This function fires a laser
-void shootLaser() {
-    // Moving the laser into its starting position
-    laser.x = ship.x;
-    laser.y = ship.y;
-    moveGameCharacter(&laser, laser.x, laser.y);
-
-    if(joypad() & J_A) {
-        /*NR52_REG = 0x80;
-        NR51_REG = 0x11;
-        NR50_REG = 0x77;
-
-        NR10_REG = 0x1E;
-        NR11_REG = 0x10;
-        NR12_REG = 0xF3;
-        NR13_REG = 0x00;
-        NR14_REG = 0x87;*/
-
-        // Scrolling the laser upwards across the screen
-        while(laser.x != 0){
-            performantdelay(5);
-            laser.y -= 10;
-            scroll_sprite(6,0,-10);
-            if(laser.y < -245){
-                laser.y = -246;
-                laser.x = -246;
-                moveGameCharacter(&laser, laser.x, laser.y);
-                break;
-            }
-        }
-    }
-
-    // Checking for collisions between the laser and the left asteroid
-    if(!checkCollisions(&laser, &leftAsteroid)){
-        laser.x = 180;
-        laser.y = 180;
-        leftAsteroid.x = 160;
-    }
-}
-
 // This is a specialised function for the game over scene
 void gameOver() {
     // Moving sprites off screen
@@ -212,13 +158,11 @@ void gameOver() {
     rightAsteroid.x = 180;
     upAsteroid.x = 180;
     downAsteroid.x = 180;
-    laser.x = 180;
     moveGameCharacter(&ship, ship.x, ship.y);
     moveGameCharacter(&leftAsteroid, leftAsteroid.x, leftAsteroid.y);
     moveGameCharacter(&rightAsteroid, rightAsteroid.x, rightAsteroid.y);
     moveGameCharacter(&downAsteroid, downAsteroid.x, downAsteroid.y);
     moveGameCharacter(&upAsteroid, upAsteroid.x, upAsteroid.y);
-    moveGameCharacter(&laser, laser.x, laser.y);
 
     // Game Over and restart prompt text
     printf("\n \n \n \n \n \n \n ====Game  Over====");
@@ -235,6 +179,11 @@ void main() {
 
     // Sprite data
     set_sprite_data(0, 8, spriteTiles);
+
+    // Setting sound channels and volume
+    //NR52_REG = 0x80;
+    //NR50_REG = 0x77;
+    //NR51_REG = 0xFF;
 
     // Setting the Snakob Studios splash screen tiles and data
     set_bkg_data(0, 100, snakobSceneData);
@@ -262,6 +211,17 @@ void main() {
     // Waiting for the player to start the game
     waitpad(J_START);
 
+    // Game start sound
+    NR52_REG = 0x80;
+    NR50_REG = 0x77;
+    NR51_REG = 0xFF;
+
+    NR10_REG = 0x16;
+    NR11_REG = 0x40;
+    NR12_REG = 0x73;
+    NR13_REG = 0x00;
+    NR14_REG = 0xC3;
+
     // Setting the game background
     set_bkg_data(0, 100, spriteTiles);
     set_bkg_tiles(0, 0, 40, 18, gamemap);
@@ -277,7 +237,6 @@ void main() {
     setupUpAsteroids();
     setupRightAsteroids();
     setupDownAsteroids();
-    setupLaser();
 
     // Game loop
     while(deathCounter == 0) {
@@ -319,8 +278,6 @@ void main() {
                     moveGameCharacter(&ship, ship.x, ship.y);
                     break;
                 }
-            case J_A:
-                shootLaser();
         }
 
         // Scrolling and reseting for the left asteroid
@@ -357,25 +314,81 @@ void main() {
 
         // Checks for a collsion between the ship and the left asteroid
         if(checkCollisions(&ship, &leftAsteroid)) {
+            // Variable updated to end game loop
             deathCounter = 1;
+            
+            // Death sound
+            NR52_REG = 0x80;
+            NR51_REG = 0x11;
+            NR50_REG = 0x77;
+
+            NR10_REG = 0x1E;
+            NR11_REG = 0x10;
+            NR12_REG = 0xF3;
+            NR13_REG = 0x00;
+            NR14_REG = 0x87;
+
+            // Calling the game over scene
             gameOver();
         }
 
         // Checks for a collision between the ship and the right asteroid
         if(checkCollisions(&ship, &rightAsteroid)) {
+            // Variable updated to end game loop
             deathCounter = 1;
+
+            // Death sound
+            NR52_REG = 0x80;
+            NR51_REG = 0x11;
+            NR50_REG = 0x77;
+
+            NR10_REG = 0x1E;
+            NR11_REG = 0x10;
+            NR12_REG = 0xF3;
+            NR13_REG = 0x00;
+            NR14_REG = 0x87;
+            
+            // Game over scene
             gameOver();
         }
 
         // Checks for a collision between the ship and the upwards asteroid
         if(checkCollisions(&ship, &upAsteroid)) {
+            // Variable updated to end game loop
             deathCounter = 1;
+            
+            // Death sound
+            NR52_REG = 0x80;
+            NR51_REG = 0x11;
+            NR50_REG = 0x77;
+
+            NR10_REG = 0x1E;
+            NR11_REG = 0x10;
+            NR12_REG = 0xF3;
+            NR13_REG = 0x00;
+            NR14_REG = 0x87;
+            
+            // Game over scene
             gameOver();
         }
 
         // Checks for a collision between the ship and the downwards asteroid
         if(checkCollisions(&ship, &downAsteroid)) {
+            // Variable updated to end game loop
             deathCounter = 1;
+            
+            // Death sound
+            NR52_REG = 0x80;
+            NR51_REG = 0x11;
+            NR50_REG = 0x77;
+
+            NR10_REG = 0x1E;
+            NR11_REG = 0x10;
+            NR12_REG = 0xF3;
+            NR13_REG = 0x00;
+            NR14_REG = 0x87;
+            
+            // Game over scene
             gameOver();
         }
 
