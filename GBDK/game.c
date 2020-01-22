@@ -166,12 +166,6 @@ void gameOver() {
 
     // Game Over and restart prompt text
     printf("\n \n \n \n \n \n \n ====Game  Over====");
-    //printf("\n \n ==Press 'Start'==");
-    //printf("\n ===to restart===");
-
-    // Waiting for the user to restart the game by pressing start
-    //waitpad(J_START);
-    //main();
 }
 
 void main() {
